@@ -4,6 +4,8 @@ public class StartPosition : MonoBehaviour
 {
     [SerializeField]
     private GameObject m_Player;
+    [SerializeField]
+    private Transform[] m_StartPoint;
 
     // Start is called before the first frame update
     void Start()
@@ -14,6 +16,7 @@ public class StartPosition : MonoBehaviour
             case 0:
                 Debug.Log("Player One");
                 // Instantiate(m_Player, Hier Gewünschte Position eingeben, transform.parent.rotation);
+                Instantiate(m_Player);
                 break;
             case 1:
                 Debug.Log("Player Two");

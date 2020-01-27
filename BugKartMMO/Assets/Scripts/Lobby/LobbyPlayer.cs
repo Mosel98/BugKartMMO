@@ -62,6 +62,8 @@ namespace Network.Lobby
                 message.IsReady = false;
                 message.LobbyPlayer = this;
                 LobbyManager.Instance.SendMessageToServer(message);
+
+                SlotPosition.SlotID = m_SlotID;
             }
         }
 

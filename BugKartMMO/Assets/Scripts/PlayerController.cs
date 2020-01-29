@@ -16,13 +16,13 @@ public class PlayerController : NetworkBehaviour
     private float m_speed = 1.0f;
 
     [SyncVar]
-    public float m_acceleration = 0.0f;
+    public float m_Acceleration = 0.0f;
 
     [SyncVar]
     private Vector3 m_position;
 
     [SyncVar]
-    public Quaternion m_rotation;
+    public Quaternion m_Rotation;
 
     //private Camera m_camera; // Position?! --> testen und festlegen!
 
@@ -33,7 +33,7 @@ public class PlayerController : NetworkBehaviour
     private int m_finishPlace;
 
     [SyncVar]
-    public bool m_finishedRace;
+    public bool m_FinishedRace;
 
     //[SyncVar]
     private EItems m_eItem;
@@ -41,18 +41,18 @@ public class PlayerController : NetworkBehaviour
     private Rigidbody m_rigidbody;
 
     // dictionary to see which key is pressed down
-    public Dictionary<KeyCode, bool> m_keysPressed = new Dictionary<KeyCode, bool>();
+    public Dictionary<KeyCode, bool> m_KeysPressed = new Dictionary<KeyCode, bool>();
 
     void Awake()
     {
         m_rigidbody = GetComponent<Rigidbody>();
 
         // add keys for movement messages
-        m_keysPressed.Add(KeyCode.W, false);
-        m_keysPressed.Add(KeyCode.S, false);
-        m_keysPressed.Add(KeyCode.A, false);
-        m_keysPressed.Add(KeyCode.D, false);
-        m_keysPressed.Add(KeyCode.Space, false);
+        m_KeysPressed.Add(KeyCode.W, false);
+        m_KeysPressed.Add(KeyCode.S, false);
+        m_KeysPressed.Add(KeyCode.A, false);
+        m_KeysPressed.Add(KeyCode.D, false);
+        m_KeysPressed.Add(KeyCode.Space, false);
 
         // m_camera = GetComponent<Camera>();
 
@@ -70,52 +70,52 @@ public class PlayerController : NetworkBehaviour
         {
             #region --- W & S ---
             // keys pressed down (true)
-            if (m_keysPressed[KeyCode.W])
+            if (m_KeysPressed[KeyCode.W])
             {
-                m_acceleration += 0.5f * Time.deltaTime;
+                m_Acceleration += 0.5f * Time.deltaTime;
             }
 
-            if (m_keysPressed[KeyCode.S])
+            if (m_KeysPressed[KeyCode.S])
             {
-                m_acceleration -= 0.5f * Time.deltaTime;
+                m_Acceleration -= 0.5f * Time.deltaTime;
             }
             #endregion
 
             #region --- Space ---
             // handbreak, faster decrease speed
-            if (m_keysPressed[KeyCode.Space])
+            if (m_KeysPressed[KeyCode.Space])
             {
-                m_acceleration -= 1.0f * Time.deltaTime;
+                m_Acceleration -= 1.0f * Time.deltaTime;
                 // don't go backwards with handbreak!
-                m_acceleration = Mathf.Clamp(m_acceleration, 0.0f, m_speed);
+                m_Acceleration = Mathf.Clamp(m_Acceleration, 0.0f, m_speed);
             }
             #endregion
 
             #region --- No Key ---
             // no move key pressed
-            if (!(m_keysPressed[KeyCode.W] ||
-                m_keysPressed[KeyCode.A] ||
-                m_keysPressed[KeyCode.S] ||
-                m_keysPressed[KeyCode.D]))
+            if (!(m_KeysPressed[KeyCode.W] ||
+                m_KeysPressed[KeyCode.A] ||
+                m_KeysPressed[KeyCode.S] ||
+                m_KeysPressed[KeyCode.D]))
             {
-                if (m_acceleration > 0)
+                if (m_Acceleration > 0)
                 {
                     // get slower without key press, but not moving backwards
-                    m_acceleration -= 0.5f * Time.deltaTime;
-                    m_acceleration = Mathf.Clamp(m_acceleration, 0.0f, m_speed);
+                    m_Acceleration -= 0.5f * Time.deltaTime;
+                    m_Acceleration = Mathf.Clamp(m_Acceleration, 0.0f, m_speed);
                 }
 
-                else if (m_acceleration < 0)
+                else if (m_Acceleration < 0)
                 {
                     // get slower backwards without key press, but not moving forwards
-                    m_acceleration += 0.5f * Time.deltaTime;
-                    m_acceleration = Mathf.Clamp(m_acceleration, -0.5f * m_speed, 0.0f);
+                    m_Acceleration += 0.5f * Time.deltaTime;
+                    m_Acceleration = Mathf.Clamp(m_Acceleration, -0.5f * m_speed, 0.0f);
                 }
             }
             #endregion
 
             // clamp acceleration between (max)speed & half (max)speed for backwards movement
-            m_acceleration = Mathf.Clamp(m_acceleration, -0.5f * m_speed, m_speed);
+            m_Acceleration = Mathf.Clamp(m_Acceleration, -0.5f * m_speed, m_speed);
 
             SetIsDirty();
         }
@@ -224,7 +224,7 @@ public class PlayerController : NetworkBehaviour
 
         #region --- movement ---
         Vector3 direction = transform.forward;
-        direction = direction.normalized * m_acceleration;
+        direction = direction.normalized * m_Acceleration;
         direction.y = m_rigidbody.velocity.y;
         m_rigidbody.velocity = direction;
 
@@ -258,7 +258,7 @@ public class PlayerController : NetworkBehaviour
     public void UpdateVariable(float _speed, float _accel)
     {
         m_speed = _speed;
-        m_acceleration = _accel;
+        m_Acceleration = _accel;
     }
 
     // Mario
@@ -295,7 +295,7 @@ public class PlayerController : NetworkBehaviour
             else
             {
                 // message CollisionCheck
-                CollisionCheckMessage message = new CollisionCheckMessage(gameObject, other.tag, m_speed, m_acceleration);
+                CollisionCheckMessage message = new CollisionCheckMessage(gameObject, other.tag, m_speed, m_Acceleration);
                 NetworkManager.Instance.SendMessageToServer(message);
             }
         }

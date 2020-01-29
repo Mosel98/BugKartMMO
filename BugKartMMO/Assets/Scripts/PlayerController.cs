@@ -254,6 +254,13 @@ public class PlayerController : NetworkBehaviour
     }
     #endregion
 
+    // get position of specific network ID
+    public Vector3 GetPosition(NetworkIdentity _netID)
+    {
+        Vector3 _position = _netID.transform.position;
+        return _position;
+    }
+
     // Mario
     public void UpdateVariable(float _speed, float _accel)
     {

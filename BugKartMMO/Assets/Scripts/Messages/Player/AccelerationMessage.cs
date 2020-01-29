@@ -10,14 +10,9 @@ namespace Network.Messages
     public class AccelerationMessage : AMessageBase
     {
         public int PlayerID { get; set; }
-        public PlayerController PlayerController { get; set; }
-
-        // W (increase) or S (decrease)
         public KeyCode PressedKey { get; set; }
-
-        public float Acceleration { get; set; }
-        public float Speed { get; set; }
-
+        public bool PressedDown { get; set; }
+        public PlayerController PlayerController { get; set; }
 
         public override byte[] Serialize(out int _bytes)
         {
@@ -29,9 +24,7 @@ namespace Network.Messages
 
                     nw.Write(PlayerID);
                     nw.Write((short)PressedKey);
-                    nw.Write(Acceleration);
-                    nw.Write(Speed);
-
+                    nw.Write(PressedDown);
                     nw.Write(PlayerController.GetComponent<NetworkIdentity>());
 
                     _bytes = (int)ms.Position;
@@ -51,64 +44,15 @@ namespace Network.Messages
 
                     PlayerID = nr.ReadInt32();
                     PressedKey = (KeyCode)nr.ReadInt16();
-                    Acceleration = nr.ReadSingle();
-                    Speed = nr.ReadSingle();
-
+                    PressedDown = nr.ReadBoolean();
                     PlayerController = nr.ReadNetworkIdentity().GetComponent<PlayerController>();
                 }
             }
         }
-               
+
         public override void Use()
         {
-            //// Validierung
-            //GameObject go = NetworkManager.Instantiate(ItemPrefab);
-            //Item item = go.GetComponent<Item>();
-            //item.OwnerID = PlayerID;
-            //item.SetIsDirty();
-
-            //GameObject go = NetworkManager.Instantiate(PlayerController);
-            //PlayerController player = go.GetComponent<PlayerController>();
-            //player
-
-            //NetworkManager.Instance.SpawnGameObject(go);
-
-            if (PressedKey == KeyCode.W)
-            {
-                Acceleration += 0.5f * Time.deltaTime;
-            }
-
-            if (PressedKey == KeyCode.S)
-            {
-                Acceleration -= 0.5f * Time.deltaTime;
-            }
-
-            if (Acceleration > Speed)
-            {
-                Acceleration = Speed;
-            }
-
-            if (Acceleration < -0.5f * Speed)
-            {
-                Acceleration = -0.5f * Speed;
-            }
-
-            if (PressedKey == KeyCode.None)
-            {
-                if (Acceleration > 0)
-                    Acceleration -= 0.5f * Time.deltaTime;
-
-                else if (Acceleration < 0)
-                    Acceleration += 0.5f * Time.deltaTime;
-
-                else
-                {
-                    Acceleration = 0.0f;
-                }
-            }
-
-            PlayerController.SetIsDirty();
-            
+            PlayerController.m_keysPressed[PressedKey] = PressedDown;
         }
     }
 }

@@ -13,42 +13,49 @@ using UnityEngine;
 public class PlayerController : NetworkBehaviour
 {
     [SyncVar]
-    private float m_speed = 10.0f;
+    private float m_speed = 1.0f;
 
     [SyncVar]
-    private float m_acceleration = 0.0f;
+    public float m_acceleration = 0.0f;
+
+    [SyncVar]
+    private Vector3 m_position;
+
+    [SyncVar]
+    public Quaternion m_rotation;
+
+    //private Camera m_camera; // Position?! --> testen und festlegen!
+
+    // vector shift of the camera based on player position
+    private Vector3 m_cameraPositionShift;
 
     //[SyncVar]
     private int m_finishPlace;
 
     [SyncVar]
-    private Vector3 m_position; // nur localplayer ändern, keine Message!!!
-
-    [SyncVar]
-    private Quaternion m_rotation; // nur localplayer ändern, keine Message!!!
-
-    //private Camera m_camera; // Position?! --> testen und festlegen!
-
-    private Vector3 m_cameraPositionShift; // Verschiebung der Kamera vom Player aus gesehen
-
-
-    //[SyncVar]
-    private bool m_finishedRace;
+    public bool m_finishedRace;
 
     //[SyncVar]
     private EItems m_eItem;
 
     private Rigidbody m_rigidbody;
 
+    // dictionary to see which key is pressed down
+    public Dictionary<KeyCode, bool> m_keysPressed = new Dictionary<KeyCode, bool>();
+
     void Awake()
     {
         m_rigidbody = GetComponent<Rigidbody>();
 
-        //m_rigidbody.constraints = RigidbodyConstraints.FreezeRotationX;
-        //m_rigidbody.constraints = RigidbodyConstraints.FreezeRotationZ;
+        // add keys for movement messages
+        m_keysPressed.Add(KeyCode.W, false);
+        m_keysPressed.Add(KeyCode.S, false);
+        m_keysPressed.Add(KeyCode.A, false);
+        m_keysPressed.Add(KeyCode.D, false);
+        m_keysPressed.Add(KeyCode.Space, false);
 
         // m_camera = GetComponent<Camera>();
-        //
+
         // m_cameraPositionShift.Set(0.0f, 15.0f, -25.0f); // Verschiebung der Kamera
         // m_camera.transform.position = transform.position + m_cameraPositionShift;
     }
@@ -58,11 +65,70 @@ public class PlayerController : NetworkBehaviour
     {
         base.Update();
 
+        #region --- Server ---
+        if (IsServer)
+        {
+            #region --- W & S ---
+            // keys pressed down (true)
+            if (m_keysPressed[KeyCode.W])
+            {
+                m_acceleration += 0.5f * Time.deltaTime;
+            }
+
+            if (m_keysPressed[KeyCode.S])
+            {
+                m_acceleration -= 0.5f * Time.deltaTime;
+            }
+            #endregion
+
+            #region --- Space ---
+            // handbreak, faster decrease speed
+            if (m_keysPressed[KeyCode.Space])
+            {
+                m_acceleration -= 1.0f * Time.deltaTime;
+                // don't go backwards with handbreak!
+                m_acceleration = Mathf.Clamp(m_acceleration, 0.0f, m_speed);
+            }
+            #endregion
+
+            #region --- No Key ---
+            // no move key pressed
+            if (!(m_keysPressed[KeyCode.W] ||
+                m_keysPressed[KeyCode.A] ||
+                m_keysPressed[KeyCode.S] ||
+                m_keysPressed[KeyCode.D]))
+            {
+                if (m_acceleration > 0)
+                {
+                    // get slower without key press, but not moving backwards
+                    m_acceleration -= 0.5f * Time.deltaTime;
+                    m_acceleration = Mathf.Clamp(m_acceleration, 0.0f, m_speed);
+                }
+
+                else if (m_acceleration < 0)
+                {
+                    // get slower backwards without key press, but not moving forwards
+                    m_acceleration += 0.5f * Time.deltaTime;
+                    m_acceleration = Mathf.Clamp(m_acceleration, -0.5f * m_speed, 0.0f);
+                }
+            }
+            #endregion
+
+            // clamp acceleration between (max)speed & half (max)speed for backwards movement
+            m_acceleration = Mathf.Clamp(m_acceleration, -0.5f * m_speed, m_speed);
+
+            SetIsDirty();
+        }
+        #endregion
+
+        #region --- != localPlayer ---
         if (!IsLocalPlayer)
         {
             return;
         }
+        #endregion
 
+        #region --- localPlayer ---
         // rotation & movement
         Rotate();
         Move();
@@ -70,179 +136,123 @@ public class PlayerController : NetworkBehaviour
         // update position of camera
         //m_camera.transform.position = transform.position + m_cameraPositionShift;
 
-        
+
         if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
         {
             // message use item (Mario)
             UseItemMessage message = new UseItemMessage(gameObject, (float)m_eItem);
             NetworkManager.Instance.SendMessageToServer(message);
         }
-        
+
+        #endregion
     }
 
     private void Move()
     {
-        //if (Input.GetKeyDown(KeyCode.Space))
-        //{
-        //    ShootItemMessage message = new ShootItemMessage();
-        //    message.ItemPrefab = null;
-        //    message.PlayerID = 0;
-        //}
-
-        // message increase decrease acceleration
-
-        if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S))
+        #region --- KeyDown W & S ---
+        if (Input.GetKeyDown(KeyCode.W) || Input.GetKeyDown(KeyCode.S))
         {
             AccelerationMessage message = new AccelerationMessage();
-            message.PlayerID = 0; // ist das richtig?!
-            message.Acceleration = m_acceleration;
-            message.Speed = m_speed;
-            if (Input.GetKey(KeyCode.W))
+            message.PlayerID = 0;
+            message.PressedDown = true;
+            message.PlayerController = this;
+
+            if (Input.GetKeyDown(KeyCode.W))
             {
                 message.PressedKey = KeyCode.W;
-                //m_acceleration += 0.5f * Time.deltaTime;
             }
 
-            if (Input.GetKey(KeyCode.S))
+            if (Input.GetKeyDown(KeyCode.S))
             {
                 message.PressedKey = KeyCode.S;
-                //m_acceleration -= 0.5f * Time.deltaTime;
             }
 
-            if (IsServer)
-            {
-                NetworkManager.Instance.SendMessageToClients(message);
-            }
-            else
-            {
-                NetworkManager.Instance.SendMessageToServer(message);
-            }
-
+            // Server handles acceleration
+            NetworkManager.Instance.SendMessageToServer(message);
         }
+        #endregion
 
-
-        if (Input.GetKey(KeyCode.Space))
-        {
-            // message handbreak
-            HandbreakMessage message = new HandbreakMessage();
-            message.PlayerID = 0; // ist das richtig?!
-            //message.Speed = m_speed;
-            message.Acceleration = m_acceleration;
-
-            if (IsServer)
-            {
-                NetworkManager.Instance.SendMessageToClients(message);
-            }
-            else
-            {
-                NetworkManager.Instance.SendMessageToServer(message);
-            }
-        }
-
-
-        // no key pressed --> acceleration decreases
-        else 
+        #region --- KeyUp W & S ---
+        if (Input.GetKeyUp(KeyCode.W) || Input.GetKeyUp(KeyCode.S))
         {
             AccelerationMessage message = new AccelerationMessage();
-            message.PlayerID = 0; // ist das richtig?!
-            message.Acceleration = m_acceleration;
-            message.Speed = m_speed;
-            message.PressedKey = KeyCode.None;
+            message.PlayerID = 0;
+            message.PressedDown = false;
+            message.PlayerController = this;
 
-            //if (m_acceleration > 0)
-            //    m_acceleration -= 0.5f * Time.deltaTime;
-            //else if (m_acceleration < 0)
-            //    m_acceleration += 0.5f * Time.deltaTime;
-            //else
-            //{
-            //    m_acceleration = 0.0f;
-            //}
-
-            //if (m_speed > 0)
-            //{
-            //    m_speed -= 0.1f * Time.deltaTime;
-            //}
-            //else if (m_speed < 0)
-            //{
-            //    m_speed += 0.1f * Time.deltaTime;
-            //}
-
-
-            //SetIsDirty(); ??? 
-            if (IsServer)
+            if (Input.GetKeyUp(KeyCode.W))
             {
-                NetworkManager.Instance.SendMessageToClients(message);
+                message.PressedKey = KeyCode.W;
             }
-            else
+
+            if (Input.GetKeyUp(KeyCode.S))
             {
-                NetworkManager.Instance.SendMessageToServer(message);
+                message.PressedKey = KeyCode.S;
             }
+
+            NetworkManager.Instance.SendMessageToServer(message);
         }
+        #endregion
 
-        // noch neu ordnen!!! & sortieren / rauswerfen
-        //m_acceleration = Mathf.Clamp(m_acceleration, -5.0f, 5.0f);
-        //m_speed += m_acceleration;
-        // m_speed = Mathf.Clamp(m_speed, -m_maxSpeed * 0.5f, m_maxSpeed);
+        #region --- KeyDown Space ---
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            AccelerationMessage message = new AccelerationMessage();
+            message.PlayerID = 0;
+            message.PressedDown = true;
+            message.PressedKey = KeyCode.Space;
+            message.PlayerController = this;
 
-        Vector3 direction = transform.forward;// * m_acceleration;
-        //direction = direction.normalized * m_speed;
+            // Server handles acceleration
+            NetworkManager.Instance.SendMessageToServer(message);
+        }
+        #endregion
 
-        //Quaternion _rot = transform.rotation * m_rotation.normalized;
-        Quaternion _rot = transform.localRotation * m_rotation.normalized;
-        
-        //transform.position.forward * m_acceleration;
+        #region --- KeyUp Space ---
+        if (Input.GetKeyUp(KeyCode.Space))
+        {
+            AccelerationMessage message = new AccelerationMessage();
+            message.PlayerID = 0;
+            message.PressedDown = false;
+            message.PressedKey = KeyCode.Space;
+            message.PlayerController = this;
 
+            // Server handles acceleration
+            NetworkManager.Instance.SendMessageToServer(message);
+        }
+        #endregion
+
+        #region --- movement ---
+        Vector3 direction = transform.forward;
         direction = direction.normalized * m_acceleration;
         direction.y = m_rigidbody.velocity.y;
         m_rigidbody.velocity = direction;
 
         transform.position += direction;
-        //transform.localRotation *= _rot;
-
-        //direction *= Time.deltaTime * m_speed;
-
-        //direction = transform.TransformDirection(direction);
-
-        //m_rigidbody.MoveRotation(m_rotation);
+        #endregion
     }
-    
+
+    #region --- Rotate ---
     private void Rotate()
     {
-        if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.S))
+        #region --- KeyDown A & D ---
+        if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.D))
         {
-            RotationMessage message = new RotationMessage();
-            message.PlayerID = 0; // ist das richtig?!
-            message.Rotation = m_rotation;
-
             if (Input.GetKey(KeyCode.A))
             {
-                // - y -> Inverse richtig?!
-                //m_rotation = Quaternion.Inverse(m_rotation) * Quaternion.Euler(0.0f, 5.0f, 0.0f);
-                //m_rotation = transform.rotation * Quaternion.Euler(0.0f, -5.0f, 0.0f);
-
-               // transform.Rotate(0.0f, -1.0f, 0.0f);
-                message.PressedKey = KeyCode.A;
+                // rotation left 
+                transform.Rotate(Vector3.up * -90.0f * Time.deltaTime);
             }
 
             if (Input.GetKey(KeyCode.D))
             {
-                // + y
-                // m_rotation = transform.rotation * Quaternion.Euler(0.0f, 5.0f, 0.0f);
-
-               // transform.Rotate(0.0f, 1.0f, 0.0f);
-                message.PressedKey = KeyCode.D;
-            }
-
-            if (IsServer)
-            {
-                NetworkManager.Instance.SendMessageToClients(message);
-            }
-            else
-            {
-                NetworkManager.Instance.SendMessageToServer(message);
+                // rotation right 
+                transform.Rotate(Vector3.up * 90.0f * Time.deltaTime);
             }
         }
+        #endregion
     }
+    #endregion
 
     // Mario
     public void UpdateVariable(float _speed, float _accel)
@@ -257,6 +267,7 @@ public class PlayerController : NetworkBehaviour
         m_eItem = (EItems)_item;
     }
 
+    #region --- OnTriggerEnter ---
     private void OnTriggerEnter(Collider other)
     {
         if (IsServer)
@@ -275,7 +286,7 @@ public class PlayerController : NetworkBehaviour
         // Mario
         if (IsLocalPlayer && other.tag == "Coin" || other.tag == "Shell" || other.tag == "Boost" || other.tag == "ItemBox")
         {
-            if(other.tag == "ItemBox")
+            if (other.tag == "ItemBox")
             {
                 // message CollisionCheck
                 CollisionCheckMessage message = new CollisionCheckMessage(gameObject, other.tag);
@@ -288,5 +299,16 @@ public class PlayerController : NetworkBehaviour
                 NetworkManager.Instance.SendMessageToServer(message);
             }
         }
+
+        if (IsLocalPlayer && other.tag == "Finish")
+        {
+            FinishLineMessage message = new FinishLineMessage();
+            message.PlayerID = 0;
+            message.PlayerController = this;
+
+            // Server handles finish race
+            NetworkManager.Instance.SendMessageToServer(message);
+        }
     }
+    #endregion
 }

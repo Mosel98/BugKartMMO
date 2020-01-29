@@ -25,9 +25,10 @@ namespace Network.Messages
 
 
             ACCELERATION_CHANGE, // Frank
-            CONTROL_CHANGE, // Frank
-            SPEED_ACC_NULL, // Frank
-            ROTATION_CHANGE, // Frank
+            FINISH_LINE, // Frank
+            //CONTROL_CHANGE, // Frank
+            //SPEED_ACC_NULL, // Frank
+            //ROTATION_CHANGE, // Frank
             COLLISION_CHECK, // Mario
             UPDATE_VARIABLE, // Mario
 
@@ -92,27 +93,31 @@ namespace Network.Messages
                     message = new SwitchSceneMessage();
                     break;
 
-                    // Frank
+                // Frank
                 case EMessageType.ACCELERATION_CHANGE:
                     message = new AccelerationMessage();
                     break;
-                    // Frank
-                case EMessageType.CONTROL_CHANGE:
-                    message = new ControlMessage();
+                // Frank
+                case EMessageType.FINISH_LINE:
+                    message = new FinishLineMessage();
                     break;
-                    // Frank
-                case EMessageType.SPEED_ACC_NULL:
-                    message = new HandbreakMessage();
-                    break;
-                    // Frank
-                case EMessageType.ROTATION_CHANGE:
-                    message = new RotationMessage();
-                    break;
-                    // Mario
+                // Frank
+                //  case EMessageType.CONTROL_CHANGE:
+                //      message = new ControlMessage();
+                //      break;
+                //      // Frank
+                // case EMessageType.SPEED_ACC_NULL:
+                //     message = new HandbreakMessage();
+                //     break;
+                // Frank
+                //  case EMessageType.ROTATION_CHANGE:
+                //      message = new RotationMessage();
+                //      break;
+                // Mario
                 case EMessageType.COLLISION_CHECK:
                     message = new CollisionCheckMessage();
                     break;
-                    // Mario
+                // Mario
                 case EMessageType.UPDATE_VARIABLE:
                     message = new UpdateVariableMessage();
                     break;

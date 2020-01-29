@@ -6,9 +6,12 @@ using Network;
 public class GameManager : NetworkBehaviour
 {
     // Bool = is finished
-    // for each player, check if finished
-    // if isfinished == true --> game stop // scene change to highscore or Win List
+    // --> m_FinishedRace (PlayerController)
+    // for each player, check if finished 
+    // if isfinished == true --> game stop // scene change to highscore or Win List 
+    // --> Load Scene: "Endscreen"
     // Player send back to lobby
+    // --> Load Scene: "Lobby"
 
     // if Player disconnects == game stop --> back to lobby
     // 

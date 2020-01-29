@@ -254,7 +254,7 @@ public class PlayerController : NetworkBehaviour
     }
     #endregion
 
-    // get position of specific network ID
+    // get position of specific network ID / player
     public Vector3 GetPosition(NetworkIdentity _netID)
     {
         Vector3 _position = _netID.transform.position;

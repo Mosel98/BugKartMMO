@@ -648,6 +648,7 @@ GameObject:
   - component: {fileID: 1322230635101226449}
   - component: {fileID: 9051830628587958724}
   - component: {fileID: 4352324217345582169}
+  - component: {fileID: 4329939191786532659}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -717,6 +718,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e83f7dcd8a205a46850e099d0f650b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  m_acceleration: 0
+  m_rotation: {x: 0, y: 0, z: 0, w: 0}
+  m_finishedRace: 0
 --- !u!114 &4352324217345582169
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -731,3 +735,23 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_syncInterval: 10
   m_extrapolationTime: 0.1
+--- !u!114 &4329939191786532659
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9051830628587958730}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ce8dcd62b1722134688c2bf448df25c9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_SyncInterval: 1
+  m_greenShell: {fileID: 2812973722266641096, guid: f8c060bf5d80de04695568e288538fd3,
+    type: 3}
+  m_redShell: {fileID: 8152506560813858379, guid: d02e0dbe9553bdc4db46f9042a0634cd,
+    type: 3}
+  "m_k\xF6ttel": {fileID: 207971309862956056, guid: 5dc072050f70c43498ff4a4889415a0a,
+    type: 3}
+  m_boostTime: 1

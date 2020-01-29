@@ -3,7 +3,12 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - Coin
+  - Shell
+  - Boost
+  - ItemBox
+  - "K\xF6ttel"
   layers:
   - Default
   - TransparentFX

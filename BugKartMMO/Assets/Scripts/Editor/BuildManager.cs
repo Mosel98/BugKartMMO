@@ -17,10 +17,12 @@ public class BuildManager
         buildOptions.locationPathName = "Builds/Windows.exe";
         buildOptions.scenes = new string[] 
         {
-            "Assets/Scenes/SampleScene.unity",
+            // --> only relevant scenes for game!
+           // "Assets/Scenes/SampleScene.unity", 
             "Assets/Scenes/MainMenu.unity",
             "Assets/Scenes/Lobby.unity",
-            "Assets/Scenes/Game.unity"
+            "Assets/Scenes/Game.unity",
+            "Assets/Scenes/Endscreen.unity"
         };
         buildOptions.target = BuildTarget.StandaloneWindows;
         buildOptions.options = BuildOptions.None;

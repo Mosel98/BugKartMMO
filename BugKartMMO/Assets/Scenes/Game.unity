@@ -736,6 +736,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: Mushroom
       objectReference: {fileID: 0}
+    - target: {fileID: 4130004482162283799, guid: fe9ec68dadd61b84e933069c28f1a858,
+        type: 3}
+      propertyPath: m_TagString
+      value: Boost
+      objectReference: {fileID: 0}
     - target: {fileID: 9006634852678528311, guid: fe9ec68dadd61b84e933069c28f1a858,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -805,6 +810,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: GreenShell
       objectReference: {fileID: 0}
+    - target: {fileID: 2812973722266641096, guid: f8c060bf5d80de04695568e288538fd3,
+        type: 3}
+      propertyPath: m_TagString
+      value: Shell
+      objectReference: {fileID: 0}
     - target: {fileID: 2812973722266641097, guid: f8c060bf5d80de04695568e288538fd3,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -872,6 +882,11 @@ PrefabInstance:
     - target: {fileID: 6911725548932445376, guid: 6959a71a7aeddb24d9394e7b20f26ad5,
         type: 3}
       propertyPath: m_Name
+      value: Coin
+      objectReference: {fileID: 0}
+    - target: {fileID: 6911725548932445376, guid: 6959a71a7aeddb24d9394e7b20f26ad5,
+        type: 3}
+      propertyPath: m_TagString
       value: Coin
       objectReference: {fileID: 0}
     - target: {fileID: 139655632837119393, guid: 6959a71a7aeddb24d9394e7b20f26ad5,
@@ -943,6 +958,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: SpeedTile
       objectReference: {fileID: 0}
+    - target: {fileID: 4926181019997715349, guid: e7984151a42677249a5113dc1084af6e,
+        type: 3}
+      propertyPath: m_TagString
+      value: Boost
+      objectReference: {fileID: 0}
     - target: {fileID: 4926181019997715348, guid: e7984151a42677249a5113dc1084af6e,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1011,6 +1031,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Start/FinishLine
+      objectReference: {fileID: 0}
+    - target: {fileID: 5592940460934185053, guid: 6d3975948858b064d874d33bbf46ca09,
+        type: 3}
+      propertyPath: m_TagString
+      value: Finish
       objectReference: {fileID: 0}
     - target: {fileID: 5592940460934185052, guid: 6d3975948858b064d874d33bbf46ca09,
         type: 3}
@@ -1081,6 +1106,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: "K\xF6ttel"
       objectReference: {fileID: 0}
+    - target: {fileID: 207971309862956056, guid: 5dc072050f70c43498ff4a4889415a0a,
+        type: 3}
+      propertyPath: m_TagString
+      value: "K\xF6ttel"
+      objectReference: {fileID: 0}
     - target: {fileID: 683648843548523226, guid: 5dc072050f70c43498ff4a4889415a0a,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -1149,6 +1179,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: RedShell (1)
+      objectReference: {fileID: 0}
+    - target: {fileID: 8152506560813858379, guid: d02e0dbe9553bdc4db46f9042a0634cd,
+        type: 3}
+      propertyPath: m_TagString
+      value: Shell
       objectReference: {fileID: 0}
     - target: {fileID: 4832796902507439442, guid: d02e0dbe9553bdc4db46f9042a0634cd,
         type: 3}

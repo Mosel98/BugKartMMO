@@ -26,9 +26,6 @@ namespace Network.Messages
 
             ACCELERATION_CHANGE, // Frank
             FINISH_LINE, // Frank
-            //CONTROL_CHANGE, // Frank
-            //SPEED_ACC_NULL, // Frank
-            //ROTATION_CHANGE, // Frank
             COLLISION_CHECK, // Mario
             UPDATE_VARIABLE, // Mario
 

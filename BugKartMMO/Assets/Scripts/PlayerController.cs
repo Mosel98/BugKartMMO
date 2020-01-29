@@ -24,10 +24,10 @@ public class PlayerController : NetworkBehaviour
     [SyncVar]
     public Quaternion m_Rotation;
 
-    //private Camera m_camera; // Position?! --> testen und festlegen!
+    private Camera m_camera; // Position?! --> testen und festlegen!
 
     // vector shift of the camera based on player position
-    private Vector3 m_cameraPositionShift;
+    // private Vector3 m_cameraPositionShift;
 
     //[SyncVar]
     private int m_finishPlace;
@@ -54,7 +54,7 @@ public class PlayerController : NetworkBehaviour
         m_KeysPressed.Add(KeyCode.D, false);
         m_KeysPressed.Add(KeyCode.Space, false);
 
-        // m_camera = GetComponent<Camera>();
+        m_camera = GetComponent<Camera>();
 
         // m_cameraPositionShift.Set(0.0f, 15.0f, -25.0f); // Verschiebung der Kamera
         // m_camera.transform.position = transform.position + m_cameraPositionShift;

@@ -47,7 +47,7 @@ namespace Network.Messages
         public override void Use()
         {
             // Player finished the race
-            PlayerController.m_finishedRace = true;
+            PlayerController.m_FinishedRace = true;
             PlayerController.SetIsDirty();
         }
     }

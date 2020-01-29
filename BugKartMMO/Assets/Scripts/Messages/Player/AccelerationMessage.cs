@@ -52,7 +52,7 @@ namespace Network.Messages
 
         public override void Use()
         {
-            PlayerController.m_keysPressed[PressedKey] = PressedDown;
+            PlayerController.m_KeysPressed[PressedKey] = PressedDown;
         }
     }
 }

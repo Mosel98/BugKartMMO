@@ -16,14 +16,17 @@ public class GameManager : NetworkBehaviour
     // if Player disconnects == game stop --> back to lobby
     // 
 
-    private GameModes m_gameMode;
+    public GameModes m_gameMode;
 
     protected override void Update()
     {
         switch (m_gameMode)
         {
             case GameModes.START_GAME:
-                
+                if (PlayerController.GetCanStart() == true)
+                {
+                    m_gameMode = GameModes.DRIVE;
+                }
                 break;
             case GameModes.DRIVE:
                 break;

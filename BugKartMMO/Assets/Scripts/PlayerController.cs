@@ -13,6 +13,7 @@ using UnityEngine.UI;
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerController : NetworkBehaviour
 {
+    public bool m_isInGame = false;
     [SerializeField]
     private Image m_itemImage;
 
@@ -393,7 +394,7 @@ public class PlayerController : NetworkBehaviour
         return m_canStart;
     }
 
-    public static bool IsInGame()
+    public bool IsInGame()
     {
         return m_isInGame;
     }

@@ -178,7 +178,7 @@ public class PlayerController : NetworkBehaviour
         //m_camera.transform.position = transform.position + m_cameraPositionShift;
 
 
-        if ((Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) && m_eItem == EItems.EMPTY)
+        if ((Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) && m_eItem != EItems.EMPTY)
         {
             // message use item (Mario)
             UseItemMessage message = new UseItemMessage(gameObject, (float)m_eItem);
@@ -186,7 +186,7 @@ public class PlayerController : NetworkBehaviour
 
             m_eItem = EItems.EMPTY;
 
-            m_itemImage.sprite = m_imgMush;
+            m_itemImage.sprite = m_imgEmpty;
         }
 
         #endregion

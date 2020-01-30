@@ -13,6 +13,11 @@ using UnityEngine;
 public class PlayerController : NetworkBehaviour
 {
     [SyncVar]
+    private float m_countdown = 5.0f;
+
+    private static bool m_canStart = false;
+
+    [SyncVar]
     private float m_speed = 1.0f;
 
     [SyncVar]
@@ -64,6 +69,12 @@ public class PlayerController : NetworkBehaviour
     protected override void Update()
     {
         base.Update();
+
+        if (IsServer) // && START_GAME)
+        {
+            StartCountdown();
+        }
+
 
         #region --- Server ---
         if (IsServer)
@@ -145,6 +156,14 @@ public class PlayerController : NetworkBehaviour
         }
 
         #endregion
+    }
+
+    private void StartCountdown()
+    {
+        // Countdown zählt runter
+
+        if (m_countdown <= 0.0f)
+            m_canStart = true;
     }
 
     private void Move()
@@ -318,4 +337,10 @@ public class PlayerController : NetworkBehaviour
         }
     }
     #endregion
+
+
+    public static bool GetCanStart()
+    {
+        return m_canStart;
+    }
 }

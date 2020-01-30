@@ -12,7 +12,7 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerController : NetworkBehaviour
 {
-    private static bool m_isInGame = false;
+    public bool m_isInGame = false;
 
 
 
@@ -352,7 +352,7 @@ public class PlayerController : NetworkBehaviour
         return m_canStart;
     }
 
-    public static bool IsInGame()
+    public bool IsInGame()
     {
         return m_isInGame;
     }

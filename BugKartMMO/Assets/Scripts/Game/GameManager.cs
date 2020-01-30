@@ -16,28 +16,68 @@ public class GameManager : NetworkBehaviour
     // if Player disconnects == game stop --> back to lobby
     // 
 
+    [SyncVar]
     public GameModes m_gameMode;
+    private GameObject[] m_allPlayers;
+
+
 
     protected override void Update()
     {
-        switch (m_gameMode)
+        m_allPlayers = GameObject.FindGameObjectsWithTag("Player");
+
+        for (int i = 0; i < m_allPlayers.Length; i++)
         {
-            case GameModes.START_GAME:
-                if (PlayerController.GetCanStart() == true)
-                {
-                    m_gameMode = GameModes.DRIVE;
-                }
-                break;
-            case GameModes.DRIVE:
-                break;
-            case GameModes.CLIENT_DISCONNECT:
-                break;
-            case GameModes.ENDSCREEN:
-                break;
-            case GameModes.RESET:
-                break;
-            default:
-                break;
+            if (m_allPlayers[i].GetComponent<PlayerController>().IsInGame() == true)
+            {
+
+            }
+            else
+            {
+                return;
+            }
+        }
+
+        if (IsServer)
+        {
+            switch (m_gameMode)
+            {
+                case GameModes.MENU:
+                    if (FindObjectsOfTypeAll<PlayerController>())
+                        break;
+                case GameModes.START_GAME:
+                    if (PlayerController.GetCanStart() == true)
+                    {
+                        m_gameMode = GameModes.DRIVE;
+                    }
+                    break;
+                case GameModes.DRIVE:
+                    if (PlayerController.GetIsFinished)
+                    {
+                        m_gameMode = GameModes.ENDSCREEN;
+                    }
+                    break;
+                case GameModes.CLIENT_DISCONNECT:
+                    if (// Button Lobby hit)
+                    {
+                        m_gameMode = GameModes.CLIENT_DISCONNECT;
+                    }
+                    break;
+                case GameModes.ENDSCREEN:
+                    if (// Button hit)
+                    {
+                        m_gameMode = GameModes.RESET;
+                    }
+                    break;
+                case GameModes.RESET:
+
+                    m_gameMode = GameModes.MENU;
+                    break;
+                default:
+                    break;
+
+            }
+            SetIsDirty();
         }
     }
 }

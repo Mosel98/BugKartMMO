@@ -13,6 +13,7 @@ using UnityEngine.UI;
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerController : NetworkBehaviour
 {
+    [SyncVar]
     public bool m_isInGame = false;
     [SerializeField]
     private Image m_itemImage;
@@ -33,8 +34,6 @@ public class PlayerController : NetworkBehaviour
     private Sprite m_imgShell;
 
     private static bool m_isInGame = false;
-
-
 
     [SyncVar]
     private float m_countdown = 5.0f;
@@ -74,11 +73,14 @@ public class PlayerController : NetworkBehaviour
     // dictionary to see which key is pressed down
     public Dictionary<KeyCode, bool> m_KeysPressed = new Dictionary<KeyCode, bool>();
 
+    public Dictionary<int, bool> m_AllPlayersReady = new Dictionary<int, bool>();
+
     void Awake()
     {
         m_rigidbody = GetComponent<Rigidbody>();
 
-        m_isInGame = true;
+        // add player to dictionary
+        m_AllPlayersReady.Add(SlotPosition.SlotID, false);
 
         // add keys for movement messages
         m_KeysPressed.Add(KeyCode.W, false);
@@ -93,6 +95,29 @@ public class PlayerController : NetworkBehaviour
 
         // m_cameraPositionShift.Set(0.0f, 15.0f, -25.0f); // Verschiebung der Kamera
         // m_camera.transform.position = transform.position + m_cameraPositionShift;
+    }
+
+    protected override void Start()
+    {
+        base.Start();
+
+        #region --- != localPlayer ---
+        if (!IsLocalPlayer)
+        {
+            return;
+        }
+        #endregion
+
+        if(IsLocalPlayer)
+        {
+            PlayerInGameMessage message = new PlayerInGameMessage();
+            message.PlayerID = 0;
+            message.PlayerController = this;
+            message.SlotID = SlotPosition.SlotID;            
+
+            // Server controls if all player are in game scene
+            NetworkManager.Instance.SendMessageToServer(message);
+        }
     }
 
     // Update is called once per frame

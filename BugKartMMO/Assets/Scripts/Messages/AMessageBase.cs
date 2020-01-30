@@ -23,7 +23,7 @@ namespace Network.Messages
             SWITCH_SCENE,
             HONK_MESSAGE,
 
-
+            PLAYER_IN_GAME, // Frank
             ACCELERATION_CHANGE, // Frank
             FINISH_LINE, // Frank
             COLLISION_CHECK, // Mario
@@ -90,6 +90,10 @@ namespace Network.Messages
                     message = new SwitchSceneMessage();
                     break;
 
+                // Frank
+                case EMessageType.PLAYER_IN_GAME:
+                    message = new PlayerInGameMessage();
+                    break;
                 // Frank
                 case EMessageType.ACCELERATION_CHANGE:
                     message = new AccelerationMessage();

@@ -7,10 +7,11 @@ using System.IO;
 // Frank
 namespace Network.Messages
 {
-    public class FinishLineMessage : AMessageBase
+    public class PlayerInGameMessage : AMessageBase
     {
         public int PlayerID { get; set; }
         public PlayerController PlayerController { get; set; }
+        public int SlotID { get; set; }
 
         public override byte[] Serialize(out int _bytes)
         {
@@ -18,10 +19,11 @@ namespace Network.Messages
             {
                 using (NetworkWriter nw = new NetworkWriter(ms))
                 {
-                    nw.Write((short)EMessageType.FINISH_LINE);
+                    nw.Write((short)EMessageType.PLAYER_IN_GAME);
 
                     nw.Write(PlayerID);
                     nw.Write(PlayerController.GetComponent<NetworkIdentity>());
+                    nw.Write(SlotID);
 
                     _bytes = (int)ms.Position;
                     return ms.ToArray();
@@ -40,14 +42,22 @@ namespace Network.Messages
 
                     PlayerID = nr.ReadInt32();
                     PlayerController = nr.ReadNetworkIdentity().GetComponent<PlayerController>();
+                    SlotID = nr.ReadInt32();
                 }
             }
         }
 
         public override void Use()
         {
-            // Player finished the race
-            PlayerController.m_FinishedRace = true;
+            // GameManager.SetGameMode(GameModes.START_GAME);
+            // GameManager.SetIsDirty();
+
+            PlayerController.m_AllPlayersReady[SlotID] = true;
+
+            if (!PlayerController.m_AllPlayersReady.ContainsValue(false))
+            {
+                PlayerController.m_isInGame = true;
+            }
             PlayerController.SetIsDirty();
         }
     }

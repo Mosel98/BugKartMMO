@@ -7,22 +7,26 @@ namespace Network.Messages
 {
     public class CollisionCheckMessage : AMessageBase
     {
-        public GameObject GameObject { get; set; }
-        public string Tag { get; set; }
-        public float Speed { get; set; }
-        public float Accel { get; set; }
+        private GameObject GameObject { get; set; }
+        private GameObject ItemBox { get; set; }
+        private string Tag { get; set; }
+        private float Speed { get; set; }
+        private float Accel { get; set; }
 
         public CollisionCheckMessage()
         {
 
         }
 
-        public CollisionCheckMessage(GameObject _go, string _tag)
+        // For collision with ItemBoxes
+        public CollisionCheckMessage(GameObject _go, GameObject _ib, string _tag)
         {
             GameObject = _go;
+            ItemBox = _ib;
             Tag = _tag;
         }
 
+        // For collision with other Items
         public CollisionCheckMessage(GameObject _go, string _tag, float _speed, float _accel)
         {
             GameObject = _go;
@@ -40,6 +44,7 @@ namespace Network.Messages
                 {
                     nr.ReadInt16();
                     GameObject = nr.ReadGameObject();
+                    ItemBox = nr.ReadGameObject();
                     Tag = nr.ReadString();
                     Speed = (float)nr.ReadDouble();
                     Accel = (float)nr.ReadDouble();
@@ -55,6 +60,7 @@ namespace Network.Messages
                 {
                     nw.Write((short)EMessageType.COLLISION_CHECK);
                     nw.Write(GameObject);
+                    nw.Write(ItemBox);
                     nw.Write(Tag);
                     nw.Write(Speed);
                     nw.Write(Accel);
@@ -75,7 +81,7 @@ namespace Network.Messages
                 {
                     if (Tag == "ItemBox")
                     {
-                        NIM.ItemBoxCheck(GameObject);
+                        NIM.ItemBoxCheck(GameObject, ItemBox);
                     }
                     else
                     {

@@ -12,10 +12,16 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerController : NetworkBehaviour
 {
+    private static bool m_isInGame = false;
+
+
+
     [SyncVar]
     private float m_countdown = 5.0f;
 
     private static bool m_canStart = false;
+
+
 
     [SyncVar]
     private float m_speed = 1.0f;
@@ -51,6 +57,8 @@ public class PlayerController : NetworkBehaviour
     void Awake()
     {
         m_rigidbody = GetComponent<Rigidbody>();
+
+        m_isInGame = true;
 
         // add keys for movement messages
         m_KeysPressed.Add(KeyCode.W, false);
@@ -342,5 +350,10 @@ public class PlayerController : NetworkBehaviour
     public static bool GetCanStart()
     {
         return m_canStart;
+    }
+
+    public static bool IsInGame()
+    {
+        return m_isInGame;
     }
 }

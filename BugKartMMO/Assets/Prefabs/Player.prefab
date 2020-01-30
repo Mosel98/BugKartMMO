@@ -649,6 +649,7 @@ GameObject:
   - component: {fileID: 9051830628587958724}
   - component: {fileID: 4352324217345582169}
   - component: {fileID: 4329939191786532659}
+  - component: {fileID: 4948742941818126741}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -718,9 +719,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1e83f7dcd8a205a46850e099d0f650b6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_acceleration: 0
-  m_rotation: {x: 0, y: 0, z: 0, w: 0}
-  m_finishedRace: 0
+  m_Acceleration: 0
+  m_Rotation: {x: 0, y: 0, z: 0, w: 0}
+  m_FinishedRace: 0
 --- !u!114 &4352324217345582169
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -755,3 +756,17 @@ MonoBehaviour:
   "m_k\xF6ttel": {fileID: 207971309862956056, guid: 5dc072050f70c43498ff4a4889415a0a,
     type: 3}
   m_boostTime: 1
+  m_itemBoxTime: 5
+--- !u!65 &4948742941818126741
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9051830628587958730}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 2, y: 2, z: 3}
+  m_Center: {x: 0, y: 1, z: 0}

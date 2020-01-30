@@ -11,7 +11,8 @@ namespace Network.Messages
     {
         public int PlayerID { get; set; }
         public PlayerController PlayerController { get; set; }
-
+        public int SlotID { get; set; }
+        
         public override byte[] Serialize(out int _bytes)
         {
             using (MemoryStream ms = new MemoryStream())
@@ -22,6 +23,7 @@ namespace Network.Messages
 
                     nw.Write(PlayerID);
                     nw.Write(PlayerController.GetComponent<NetworkIdentity>());
+                    nw.Write(SlotID);
 
                     _bytes = (int)ms.Position;
                     return ms.ToArray();
@@ -40,14 +42,36 @@ namespace Network.Messages
 
                     PlayerID = nr.ReadInt32();
                     PlayerController = nr.ReadNetworkIdentity().GetComponent<PlayerController>();
+                    SlotID = nr.ReadInt32();
                 }
             }
         }
 
         public override void Use()
         {
-            // Player finished the race
-            PlayerController.m_FinishedRace = true;
+            // player finished race
+            PlayerController.m_FinishedPlayers[SlotID] = true;
+
+            // set bool to true, when every player has finished the race and can go to endscreen
+            if (!PlayerController.m_FinishedPlayers.ContainsValue(false))
+            {
+                PlayerController.m_FinishedRace = true;
+            }
+
+            // counts the finished player
+            int _finishCount = 0;
+
+            // counts the amount of players which finished the race and set the finish place to this count
+            for (int i= 0; i < PlayerController.m_FinishedPlayers.Count; i++)
+            {
+                if(PlayerController.m_FinishedPlayers[i] == true)
+                {
+                _finishCount++;
+                }
+            }
+
+            // set finish place of player 
+            PlayerController.m_finishPlace = _finishCount;
             PlayerController.SetIsDirty();
         }
     }

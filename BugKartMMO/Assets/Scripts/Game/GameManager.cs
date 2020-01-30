@@ -39,7 +39,7 @@ public class GameManager : NetworkBehaviour
                     }
                     break;
                 case GameModes.DRIVE:
-                    if (PlayerController.GetIsFinished)
+                    if (PlayerController.GetIsFinished() == true)
                     {
                         m_gameMode = GameModes.ENDSCREEN;
                     }

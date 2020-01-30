@@ -14,7 +14,7 @@ using UnityEngine.UI;
 public class PlayerController : NetworkBehaviour
 {
     [SyncVar]
-    public bool m_isInGame = false;
+    public static bool m_isInGame = false;
     [SerializeField]
     private Image m_itemImage;
 
@@ -57,11 +57,11 @@ public class PlayerController : NetworkBehaviour
     // vector shift of the camera based on player position
     // private Vector3 m_cameraPositionShift;
 
-    //[SyncVar]
-    private int m_finishPlace;
+    [SyncVar]
+    public int m_finishPlace;
 
     [SyncVar]
-    public bool m_FinishedRace;
+    public static bool m_FinishedRace;
 
     //[SyncVar]
     private EItems m_eItem = EItems.EMPTY;
@@ -71,7 +71,11 @@ public class PlayerController : NetworkBehaviour
     // dictionary to see which key is pressed down
     public Dictionary<KeyCode, bool> m_KeysPressed = new Dictionary<KeyCode, bool>();
 
+    // dictionary to see which player are spawned in the scene
     public Dictionary<int, bool> m_AllPlayersReady = new Dictionary<int, bool>();
+
+    // dictionary to see which player have finished the race
+    public Dictionary<int, bool> m_FinishedPlayers = new Dictionary<int, bool>();
 
     void Awake()
     {
@@ -79,6 +83,8 @@ public class PlayerController : NetworkBehaviour
 
         // add player to dictionary
         m_AllPlayersReady.Add(SlotPosition.SlotID, false);
+
+        m_FinishedPlayers.Add(SlotPosition.SlotID, false);
 
         // add keys for movement messages
         m_KeysPressed.Add(KeyCode.W, false);
@@ -411,14 +417,21 @@ public class PlayerController : NetworkBehaviour
     }
     #endregion
 
+    // bool that all players are spawn in the game scene
+    public static bool IsInGame()
+    {
+        return m_isInGame;
+    }
 
+    // bool turns true after countdown is zero
     public static bool GetCanStart()
     {
         return m_canStart;
     }
 
-    public bool IsInGame()
+    public static bool GetIsFinished()
     {
-        return m_isInGame;
+        return m_FinishedRace;
     }
+
 }

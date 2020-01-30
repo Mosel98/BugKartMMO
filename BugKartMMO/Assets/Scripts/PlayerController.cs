@@ -323,7 +323,7 @@ public class PlayerController : NetworkBehaviour
             if (other.tag == "ItemBox")
             {
                 // message CollisionCheck
-                CollisionCheckMessage message = new CollisionCheckMessage(gameObject, other.tag);
+                CollisionCheckMessage message = new CollisionCheckMessage(gameObject, other.gameObject, other.tag);
                 NetworkManager.Instance.SendMessageToServer(message);
             }
             else

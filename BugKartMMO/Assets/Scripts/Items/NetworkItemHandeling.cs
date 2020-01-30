@@ -1,6 +1,5 @@
 ﻿using Network.Messages;
 using UnityEngine;
-using UnityEngine.AI;
 
 // Mario
 namespace Network
@@ -46,14 +45,14 @@ namespace Network
                 case EItems.COIN:
                     ConstantSpeed();
                     break;
-                case EItems.GREENSHELL:
-                    SpawnItem(m_greenShell, 5.0f);
-                    break;
                 case EItems.MUSHROOM:
                     BoostSpeed();
                     break;
                 case EItems.KÖTTEL:
                     SpawnItem(m_köttel, -5.0f);
+                    break;
+                case EItems.GREENSHELL:
+                    SpawnItem(m_greenShell, 5.0f);                    
                     break;
             }
         }

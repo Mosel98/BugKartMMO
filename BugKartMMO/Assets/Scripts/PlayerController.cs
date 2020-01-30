@@ -5,6 +5,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
+using UnityEngine.UI;
 
 
 // Frank
@@ -12,6 +13,24 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerController : NetworkBehaviour
 {
+    [SerializeField]
+    private Image m_itemImage;
+
+    [SerializeField]
+    private Sprite m_imgEmpty;
+
+    [SerializeField]
+    private Sprite m_imgCoin;
+
+    [SerializeField]
+    private Sprite m_imgMush;
+
+    [SerializeField]
+    private Sprite m_imgKöttel;
+
+    [SerializeField]
+    private Sprite m_imgShell;
+
     private static bool m_isInGame = false;
 
 
@@ -47,7 +66,7 @@ public class PlayerController : NetworkBehaviour
     public bool m_FinishedRace;
 
     //[SyncVar]
-    private EItems m_eItem;
+    private EItems m_eItem = EItems.EMPTY;
 
     private Rigidbody m_rigidbody;
 
@@ -68,6 +87,8 @@ public class PlayerController : NetworkBehaviour
         m_KeysPressed.Add(KeyCode.Space, false);
 
         m_camera = GetComponent<Camera>();
+
+        m_itemImage.sprite = m_imgEmpty;
 
         // m_cameraPositionShift.Set(0.0f, 15.0f, -25.0f); // Verschiebung der Kamera
         // m_camera.transform.position = transform.position + m_cameraPositionShift;
@@ -156,11 +177,15 @@ public class PlayerController : NetworkBehaviour
         //m_camera.transform.position = transform.position + m_cameraPositionShift;
 
 
-        if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift))
+        if ((Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) && m_eItem == EItems.EMPTY)
         {
             // message use item (Mario)
             UseItemMessage message = new UseItemMessage(gameObject, (float)m_eItem);
             NetworkManager.Instance.SendMessageToServer(message);
+
+            m_eItem = EItems.EMPTY;
+
+            m_itemImage.sprite = m_imgMush;
         }
 
         #endregion
@@ -299,6 +324,22 @@ public class PlayerController : NetworkBehaviour
     public void UpdateItem(float _item)
     {
         m_eItem = (EItems)_item;
+
+        switch ((EItems)_item)
+        {
+            case EItems.COIN:
+                m_itemImage.sprite = m_imgCoin;
+                break;
+            case EItems.MUSHROOM:
+                m_itemImage.sprite = m_imgMush;
+                break;
+            case EItems.KÖTTEL:
+                m_itemImage.sprite = m_imgKöttel;
+                break;
+            case EItems.GREENSHELL:
+                m_itemImage.sprite = m_imgShell;
+                break;
+        }
     }
 
     #region --- OnTriggerEnter ---

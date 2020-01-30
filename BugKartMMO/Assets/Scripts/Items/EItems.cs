@@ -5,5 +5,6 @@ public enum EItems
     COIN,
     MUSHROOM,
     KÖTTEL,
-    GREENSHELL
+    GREENSHELL,
+    EMPTY
 }

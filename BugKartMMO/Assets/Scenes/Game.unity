@@ -220,8 +220,8 @@ RectTransform:
   m_Father: {fileID: 907781585}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.7983871, y: 0.9168514}
-  m_AnchorMax: {x: 0.98271894, y: 0.9833703}
+  m_AnchorMin: {x: 0.7983871, y: 0.82107514}
+  m_AnchorMax: {x: 0.98271894, y: 0.98325616}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
@@ -579,7 +579,7 @@ MonoBehaviour:
     spaceCount: 2
     wordCount: 3
     linkCount: 0
-    lineCount: 1
+    lineCount: 2
     pageCount: 1
     materialCount: 1
   m_isUsingLegacyAnimationComponent: 0
@@ -1070,7 +1070,7 @@ MonoBehaviour:
   m_outlineColor:
     serializedVersion: 2
     rgba: 4278190080
-  m_fontSize: 38.95
+  m_fontSize: 34.95
   m_fontSizeBase: 28
   m_fontWeight: 400
   m_enableAutoSizing: 1

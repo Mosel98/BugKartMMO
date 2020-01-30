@@ -33,8 +33,6 @@ public class PlayerController : NetworkBehaviour
     [SerializeField]
     private Sprite m_imgShell;
 
-    private static bool m_isInGame = false;
-
     [SyncVar]
     private float m_countdown = 5.0f;
 
@@ -108,12 +106,12 @@ public class PlayerController : NetworkBehaviour
         }
         #endregion
 
-        if(IsLocalPlayer)
+        if (IsLocalPlayer)
         {
             PlayerInGameMessage message = new PlayerInGameMessage();
             message.PlayerID = 0;
             message.PlayerController = this;
-            message.SlotID = SlotPosition.SlotID;            
+            message.SlotID = SlotPosition.SlotID;
 
             // Server controls if all player are in game scene
             NetworkManager.Instance.SendMessageToServer(message);

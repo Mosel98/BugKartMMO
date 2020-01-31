@@ -34,14 +34,12 @@ public class PlayerController : NetworkBehaviour
     private Sprite m_imgShell;
 
     [SyncVar]
-    private float m_countdown = 5.0f;
+    public float m_Countdown = 5.0f;
 
     private static bool m_canStart = false;
 
-
-
     [SyncVar]
-    private float m_speed = 0.5f;
+    private float m_speed = 25.0f;
 
     [SyncVar]
     public float m_Acceleration = 0.0f;
@@ -52,7 +50,7 @@ public class PlayerController : NetworkBehaviour
     //[SyncVar]
     //public Quaternion m_Rotation;
 
-    private Camera m_camera; // Position?! --> testen und festlegen!
+    private Camera m_camera;
 
     // vector shift of the camera based on player position
     private Vector3 m_cameraPositionShift;
@@ -93,10 +91,9 @@ public class PlayerController : NetworkBehaviour
         m_KeysPressed.Add(KeyCode.D, false);
         m_KeysPressed.Add(KeyCode.Space, false);
 
-        //if (IsLocalPlayer)
-        //{
-        //    m_camera = this.GetComponent<Camera>();
-        //}
+
+        m_camera = GetComponentInChildren<Camera>();
+
 
 
         m_gameUIManager = GameObject.Find("GameManager").GetComponent<GameUIManager>();
@@ -109,11 +106,12 @@ public class PlayerController : NetworkBehaviour
     {
         base.Start();
 
-        //if (IsLocalPlayer)
-        //{
-        //    m_cameraPositionShift.Set(0.0f, 15.0f, -25.0f); // Verschiebung der Kamera
-        //    m_camera.transform.position = transform.position + m_cameraPositionShift;
-        //}
+        if (!IsLocalPlayer)
+        {
+            m_camera.enabled = false;
+            // m_cameraPositionShift.Set(0.0f, 15.0f, -25.0f); // Verschiebung der Kamera
+            // m_camera.transform.position = transform.position + m_cameraPositionShift;
+        }
 
         #region --- != localPlayer ---
         if (!IsLocalPlayer)
@@ -139,7 +137,7 @@ public class PlayerController : NetworkBehaviour
     {
         base.Update();
 
-        //if (IsServer && GameManager.m_gameMode == GameModes.START_GAME)
+        if (IsServer && GameManager.m_gameMode == GameModes.START_GAME)
         {
             StartCountdown();
         }
@@ -152,12 +150,12 @@ public class PlayerController : NetworkBehaviour
             // keys pressed down (true)
             if (m_KeysPressed[KeyCode.W])
             {
-                m_Acceleration += 0.25f * Time.deltaTime;
+                m_Acceleration += 1.25f * Time.deltaTime;
             }
 
             if (m_KeysPressed[KeyCode.S])
             {
-                m_Acceleration -= 0.25f * Time.deltaTime;
+                m_Acceleration -= 1.25f * Time.deltaTime;
             }
             #endregion
 
@@ -233,10 +231,12 @@ public class PlayerController : NetworkBehaviour
 
     private void StartCountdown()
     {
-        // Countdown zählt runter
-
-        if (m_countdown <= 0.0f)
-            m_canStart = true;
+        // Countdown message to start synchronised countdown
+        CountdownMessage message = new CountdownMessage();
+        message.PlayerID = 0;
+        message.PlayerController = this;
+        message.Countdown = m_Countdown;
+        NetworkManager.Instance.SendMessageToServer(message);
     }
 
     private void Move()
@@ -317,8 +317,9 @@ public class PlayerController : NetworkBehaviour
         #region --- movement ---
         Vector3 direction = transform.forward;
         direction = direction.normalized * m_Acceleration;
-        //direction.y = m_rigidbody.velocity.y;
-        m_rigidbody.MovePosition(transform.position + direction);
+        direction.y = m_rigidbody.velocity.y;
+        m_rigidbody.velocity = direction;
+        // m_rigidbody.MovePosition(direction + transform.position);
 
         #endregion
     }

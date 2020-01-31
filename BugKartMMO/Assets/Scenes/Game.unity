@@ -1484,6 +1484,36 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 0}
+      propertyPath: m_prefabs.Array.size
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_PlayerPrefab
+      value: 
+      objectReference: {fileID: 1322230635101226449, guid: a4a9b5cd17e6f49498bf4f7c87ef5fac,
+        type: 3}
+    - target: {fileID: 0}
+      propertyPath: m_prefabs.Array.data[0]
+      value: 
+      objectReference: {fileID: 196893941}
+    - target: {fileID: 0}
+      propertyPath: m_prefabs.Array.data[1]
+      value: 
+      objectReference: {fileID: 1322230635101226449, guid: a4a9b5cd17e6f49498bf4f7c87ef5fac,
+        type: 3}
+    - target: {fileID: 0}
+      propertyPath: m_AutoSpawnPlayer
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_Enabled
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 0}
+      propertyPath: m_DisplayGUI
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 2767537024055597148, guid: 12ecc3816400c9c4fb9388cde9c1eb87,
         type: 3}
       propertyPath: m_Name
@@ -1498,6 +1528,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_IsActive
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2767537024055597088, guid: 12ecc3816400c9c4fb9388cde9c1eb87,
+        type: 3}
+      propertyPath: m_prefabID
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 2767537024055597149, guid: 12ecc3816400c9c4fb9388cde9c1eb87,
         type: 3}
@@ -1554,45 +1589,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 2767537024055597088, guid: 12ecc3816400c9c4fb9388cde9c1eb87,
-        type: 3}
-      propertyPath: m_prefabID
-      value: 2
-      objectReference: {fileID: 0}
     - target: {fileID: 2767537024055597151, guid: 12ecc3816400c9c4fb9388cde9c1eb87,
         type: 3}
       propertyPath: m_Enabled
       value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: m_prefabs.Array.size
-      value: 2
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: m_PlayerPrefab
-      value: 
-      objectReference: {fileID: 1322230635101226449, guid: a4a9b5cd17e6f49498bf4f7c87ef5fac,
-        type: 3}
-    - target: {fileID: 0}
-      propertyPath: m_prefabs.Array.data[0]
-      value: 
-      objectReference: {fileID: 196893941}
-    - target: {fileID: 0}
-      propertyPath: m_prefabs.Array.data[1]
-      value: 
-      objectReference: {fileID: 1322230635101226449, guid: a4a9b5cd17e6f49498bf4f7c87ef5fac,
-        type: 3}
-    - target: {fileID: 0}
-      propertyPath: m_AutoSpawnPlayer
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: m_Enabled
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 0}
-      propertyPath: m_DisplayGUI
-      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2767537024055597150, guid: 12ecc3816400c9c4fb9388cde9c1eb87,
         type: 3}

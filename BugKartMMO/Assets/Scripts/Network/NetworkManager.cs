@@ -578,66 +578,87 @@ namespace Network
         void StartPosition(int _id)
         {
             NetworkIdentity go;
-            Renderer rend;
+            Renderer[] rend;
+
+            //for (int i = 0; i < m_allClients.Count; i++)
+            //{
+            //    
+            //}
+
             // Check in which Slot ever Player was in the Lobby and at which Start Position he is allowed to spawn
-            switch (SlotPosition.SlotID)
+            switch (_id)
             {
-                case 0:
+                case 2:
                     Debug.Log("Player One");
                     // Instantiate(m_Player, Hier Gewünschte Position eingeben, transform.parent.rotation);
                     go = Instantiate(m_PlayerPrefab, new Vector3(275.97f, 1, 555), Quaternion.identity);
 
                     //// change Color of Player
-                    //rend = m_PlayerPrefab.GetComponent<Renderer>();
-                    //rend.material.color = Color.blue;
+                    rend = go.GetComponentsInChildren<Renderer>();
+                    foreach (Renderer r in rend)
+                    {
+                        r.material.color = Color.blue;
+                    }
 
                     SpawnGameObjectAsLocalPlayer(go.gameObject, _id);
                     break;
-                case 1:
+                case 3:
                     Debug.Log("Player Two");
                     // Instantiate(m_Player, Hier Gewünschte Position eingeben, transform.parent.rotation);
                     go = Instantiate(m_PlayerPrefab, new Vector3(285.32f, 1, 555), Quaternion.identity);
 
                     //// change Color of Player
-                    //rend = m_PlayerPrefab.GetComponent<Renderer>();
-                    //rend.material.color = Color.red;
+                    rend = go.GetComponentsInChildren<Renderer>();
+                    foreach (Renderer r in rend)
+                    {
+                        r.material.color = Color.red;
+                    }
 
                     SpawnGameObjectAsLocalPlayer(go.gameObject, _id);
                     break;
-                case 2:
+                case 4:
                 Debug.Log("Player Three");
                 // Instantiate(m_Player, Hier Gewünschte Position eingeben, transform.parent.rotation);
                 go = Instantiate(m_PlayerPrefab, new Vector3(295.52f, 1, 555), Quaternion.identity);
 
-                  //// change Color of Player
-                  //rend = m_PlayerPrefab.GetComponent<Renderer>();
-                  //rend.material.color = Color.green;
+                    //// change Color of Player
+                    rend = go.GetComponentsInChildren<Renderer>();
+                    foreach (Renderer r in rend)
+                    {
+                        r.material.color = Color.green;
+                    }
 
-                  SpawnGameObjectAsLocalPlayer(go.gameObject, _id);
+                    SpawnGameObjectAsLocalPlayer(go.gameObject, _id);
                   break;
-               case 3:
+               case 5:
                    Debug.Log("Player Four");
                    // Instantiate(m_Player, Hier Gewünschte Position eingeben, transform.parent.rotation);
                    go = Instantiate(m_PlayerPrefab, new Vector3(305.15f, 1, 555), Quaternion.identity);
 
 
-                   //// change Color of Player
-                   //rend = m_PlayerPrefab.GetComponent<Renderer>();
-                   //rend.material.color = Color.magenta;
+                    //// change Color of Player
+                    rend = go.GetComponentsInChildren<Renderer>();
+                    foreach (Renderer r in rend)
+                    {
+                        r.material.color = Color.magenta;
+                    }
 
-                   SpawnGameObjectAsLocalPlayer(go.gameObject, _id);
+                    SpawnGameObjectAsLocalPlayer(go.gameObject, _id);
                    break;
-               case 4:
+               case 6:
                    Debug.Log("Player Five");
                    // Instantiate(m_Player, Hier Gewünschte Position eingeben, transform.parent.rotation);
                    go = Instantiate(m_PlayerPrefab, new Vector3(315.01f, 1, 555), Quaternion.identity);
 
 
-                   //// change Color of Player
-                   //rend = m_PlayerPrefab.GetComponent<Renderer>();
-                   //rend.material.color = Color.gray;
+                    //// change Color of Player
+                    rend = go.GetComponentsInChildren<Renderer>();
+                    foreach (Renderer r in rend)
+                    {
+                        r.material.color = Color.gray;
+                    }
 
-                   SpawnGameObjectAsLocalPlayer(go.gameObject, _id);
+                    SpawnGameObjectAsLocalPlayer(go.gameObject, _id);
                    break;
                 default:
                     Debug.Log("Not working");

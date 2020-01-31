@@ -61,7 +61,10 @@ namespace Network.Messages
                 {
                     if(Item == -1)
                     {
-                        playerController.UpdateVariable(Speed, Accel);
+                       // playerController.UpdateVariable(Speed, Accel);
+                        playerController.m_Acceleration = Accel;
+                        playerController.m_Speed = Speed;
+                        playerController.SetIsDirty();
                     }
                     else
                     {

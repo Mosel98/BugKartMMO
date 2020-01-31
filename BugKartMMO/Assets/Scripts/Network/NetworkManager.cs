@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -366,9 +366,10 @@ namespace Network
 
         public void SendMessageToClients(AMessageBase _message, QosType _channel = QosType.Reliable)
         {
-            if (isHost)
+            if (isHost && !(_message is SpawnMessage))
             {
                 _message.Use();
+<<<<<<< HEAD
             }
 
             int bytesLength;
@@ -701,3 +702,340 @@ namespace Network
     }
 }
 #pragma warning restore CS0618 // Type or member is obsolete
+=======
+            }
+
+            int bytesLength;
+            byte[] buffer = _message.Serialize(out bytesLength);
+
+            byte error;
+
+            byte channelID = 0;
+            switch (_channel)
+            {
+                case QosType.Unreliable:
+                    channelID = m_unreliableChannel;
+                    break;
+                case QosType.Reliable:
+                    channelID = m_reliableChannel;
+                    break;
+                case QosType.StateUpdate:
+                    channelID = m_unreliableStateUpdateChannel;
+                    break;
+                default:
+                    Debug.LogError("Could not find channel! " + _channel);
+                    break;
+            }
+
+            foreach (int id in m_allClients)
+            {
+                if (id == m_clientID || id == m_clientID + 1)
+                    continue;
+
+                NetworkTransport.Send(m_hostID, id, channelID,
+                    buffer, bytesLength, out error);
+
+                NetworkError networkError = (NetworkError)error;
+                if (networkError != NetworkError.Ok)
+                {
+                    Debug.LogError("Fehler beim Senden!" + networkError);
+                }
+            }
+
+        }
+
+        public void SendMessageToClient(int _id, AMessageBase _message, QosType _channel = QosType.Reliable)
+        {
+            int bytesLength;
+            byte[] buffer = _message.Serialize(out bytesLength);
+
+            byte error;
+
+            byte channelID = 0;
+            switch (_channel)
+            {
+                case QosType.Unreliable:
+                    channelID = m_unreliableChannel;
+                    break;
+                case QosType.Reliable:
+                    channelID = m_reliableChannel;
+                    break;
+                case QosType.StateUpdate:
+                    channelID = m_unreliableStateUpdateChannel;
+                    break;
+                default:
+                    Debug.LogError("Could not find channel! " + _channel);
+                    break;
+            }
+
+            NetworkTransport.Send(m_hostID, _id, channelID,
+                buffer, bytesLength, out error);
+
+            NetworkError networkError = (NetworkError)error;
+            if (networkError != NetworkError.Ok)
+            {
+                Debug.LogError("Fehler beim Senden!" + networkError);
+            }
+        }
+
+        #region ---Event Methods---
+        public void SubscribeToOnClientConnected(ClientConnectedDelegate _func)
+        {
+            m_onClientConnected -= _func;
+            m_onClientConnected += _func;
+        }
+
+        public void UnsubscribeFromOnClientConnected(ClientConnectedDelegate _func)
+        {
+            m_onClientConnected -= _func;
+        }
+
+        public void SubscribeToOnClientDisconnected(ClientDisconnectedDelegate _func)
+        {
+            m_onClientDisconnected -= _func;
+            m_onClientDisconnected += _func;
+        }
+
+        public void UnsubscribeFromOnClientDisconnected(ClientDisconnectedDelegate _func)
+        {
+            m_onClientDisconnected -= _func;
+        }
+
+        public void SubscribeToOnDataReceived(DataReceivedDelegate _func)
+        {
+            m_onDataReceived -= _func;
+            m_onDataReceived += _func;
+        }
+
+        public void UnsubscribeFromOnDataReceived(DataReceivedDelegate _func)
+        {
+            m_onDataReceived -= _func;
+        }
+        #endregion ---Event Methods---
+
+        private void SceneWasLoaded(Scene _scene, LoadSceneMode _mode)
+        {
+            if (IsClient)
+            {
+                NetworkIdentity[] identities = FindObjectsOfType<NetworkIdentity>();
+
+                foreach (NetworkIdentity identity in identities)
+                {
+                    if (identity.GetComponent<LobbyPlayer>())
+                        continue;
+
+                    Destroy(identity.gameObject);
+                }
+
+                SceneLoadedMessage message = new SceneLoadedMessage();
+                SendMessageToServer(message);
+            }
+            else if (IsServer)
+            {
+                SwitchSceneMessage message = new SwitchSceneMessage();
+                message.ScenePath = _scene.path;
+
+                SendMessageToClients(message);
+
+                NetworkIdentity[] identities = FindObjectsOfType<NetworkIdentity>();
+
+                foreach (NetworkIdentity identity in identities)
+                {
+                    if (identity.GetComponent<LobbyPlayer>())
+                        continue;
+                    SpawnGameObject(identity.gameObject);
+                }
+
+                if (_scene.name == "Game")
+                {
+                    foreach (int _id in m_allClients)
+                    {
+                        SpawnPlayerPrefab(_id);
+                    }
+                }
+            }
+        }
+
+        protected virtual void Initialize()
+        {
+            NetworkTransport.Init();
+            ConnectionConfig config = new ConnectionConfig();
+            m_reliableChannel = config.AddChannel(QosType.Reliable);
+            m_unreliableChannel = config.AddChannel(QosType.Unreliable);
+            m_unreliableStateUpdateChannel = config.AddChannel(QosType.StateUpdate);
+
+            m_hostTopology = new HostTopology(config, 10);
+        }
+
+        protected virtual void ReceiveEvents()
+        {
+            int connectionID, channelID, receivedBytes;
+            byte[] buffer = new byte[1024];
+            byte error;
+            for (int i = 0; i < m_MaxNumberOfEventsPerFrame; i++)
+            {
+                NetworkEventType eventType = NetworkTransport.ReceiveFromHost
+                    (
+                        m_hostID, out connectionID,
+                        out channelID, buffer, buffer.Length, out receivedBytes,
+                        out error
+                    );
+
+                NetworkError networkError = (NetworkError)error;
+                if (networkError != NetworkError.Ok)
+                {
+                    Debug.LogError($"Fehler beim Empfangen der Daten! ({networkError})", this);
+                    return;
+                }
+
+                switch (eventType)
+                {
+                    case NetworkEventType.DataEvent:
+                        m_onDataReceived?.Invoke(connectionID, buffer, receivedBytes);
+                        break;
+                    case NetworkEventType.ConnectEvent:
+                        if (connectionID == m_clientID)
+                            break;
+
+                        m_onClientConnected?.Invoke(connectionID);
+                        break;
+                    case NetworkEventType.DisconnectEvent:
+                        m_onClientDisconnected?.Invoke(connectionID);
+                        break;
+                    case NetworkEventType.Nothing:
+                        return;
+                    case NetworkEventType.BroadcastEvent:
+                        break;
+                    default:
+                        Debug.LogError($"Event exisitiert nicht! {eventType}", this);
+                        break;
+                }
+            }
+        }
+
+        protected virtual void SpawnPlayerPrefab(int _id)
+        {
+            m_PlayerPrefab.tag = "Player";
+            //NetworkIdentity go = Instantiate(m_PlayerPrefab, Vector3.zero, Quaternion.identity);
+            //NetworkIdentity go = Instantiate(m_PlayerPrefab, m_StartPoint[0].position, Quaternion.identity);
+            //NetworkIdentity go = Instantiate(m_PlayerPrefab, new Vector3(275.0f, 1.0f, 555.0f), Quaternion.identity);
+            //SpawnGameObjectAsLocalPlayer(go.gameObject, _id);
+
+            StartPosition(_id);
+        }
+
+        void StartPosition(int _id)
+        {
+            NetworkIdentity go;
+            Renderer[] rend;
+
+            //for (int i = 0; i < m_allClients.Count; i++)
+            //{
+            //    
+            //}
+
+            // Check in which Slot ever Player was in the Lobby and at which Start Position he is allowed to spawn
+            switch (_id)
+            {
+                case 2:
+                    Debug.Log("Player One");
+                    // Instantiate(m_Player, Hier Gewünschte Position eingeben, transform.parent.rotation);
+                    go = Instantiate(m_PlayerPrefab, new Vector3(275.97f, 1, 555), Quaternion.identity);
+
+                    //// change Color of Player
+                    rend = go.GetComponentsInChildren<Renderer>();
+                    foreach (Renderer r in rend)
+                    {
+                        r.material.color = Color.blue;
+                    }
+
+                    SpawnGameObjectAsLocalPlayer(go.gameObject, _id);
+                    break;
+                case 3:
+                    Debug.Log("Player Two");
+                    // Instantiate(m_Player, Hier Gewünschte Position eingeben, transform.parent.rotation);
+                    go = Instantiate(m_PlayerPrefab, new Vector3(285.32f, 1, 555), Quaternion.identity);
+
+                    //// change Color of Player
+                    rend = go.GetComponentsInChildren<Renderer>();
+                    foreach (Renderer r in rend)
+                    {
+                        r.material.color = Color.red;
+                    }
+
+                    SpawnGameObjectAsLocalPlayer(go.gameObject, _id);
+                    break;
+                case 4:
+                Debug.Log("Player Three");
+                // Instantiate(m_Player, Hier Gewünschte Position eingeben, transform.parent.rotation);
+                go = Instantiate(m_PlayerPrefab, new Vector3(295.52f, 1, 555), Quaternion.identity);
+
+                    //// change Color of Player
+                    rend = go.GetComponentsInChildren<Renderer>();
+                    foreach (Renderer r in rend)
+                    {
+                        r.material.color = Color.green;
+                    }
+
+                    SpawnGameObjectAsLocalPlayer(go.gameObject, _id);
+                  break;
+               case 5:
+                   Debug.Log("Player Four");
+                   // Instantiate(m_Player, Hier Gewünschte Position eingeben, transform.parent.rotation);
+                   go = Instantiate(m_PlayerPrefab, new Vector3(305.15f, 1, 555), Quaternion.identity);
+
+
+                    //// change Color of Player
+                    rend = go.GetComponentsInChildren<Renderer>();
+                    foreach (Renderer r in rend)
+                    {
+                        r.material.color = Color.magenta;
+                    }
+
+                    SpawnGameObjectAsLocalPlayer(go.gameObject, _id);
+                   break;
+               case 6:
+                   Debug.Log("Player Five");
+                   // Instantiate(m_Player, Hier Gewünschte Position eingeben, transform.parent.rotation);
+                   go = Instantiate(m_PlayerPrefab, new Vector3(315.01f, 1, 555), Quaternion.identity);
+
+
+                    //// change Color of Player
+                    rend = go.GetComponentsInChildren<Renderer>();
+                    foreach (Renderer r in rend)
+                    {
+                        r.material.color = Color.gray;
+                    }
+
+                    SpawnGameObjectAsLocalPlayer(go.gameObject, _id);
+                   break;
+                default:
+                    Debug.Log("Not working");
+                    break;
+            }
+
+
+        }
+
+        protected virtual void AddToAllClients(int _id)
+        {
+            if (m_allClients.Contains(_id))
+            {
+                Debug.LogException(new System.InvalidOperationException("ID bereits hinzugefügt! " + _id));
+                return;
+            }
+
+            m_allClients.Add(_id);
+        }
+
+        protected virtual void NetworkManager_m_onDataReceived(int _sender, byte[] _data, int _receivedBytes)
+        {
+            Debug.Log("Received message from " + (IsServer ? "Server" : "Client"));
+            AMessageBase message = AMessageBase.ConstructMessage(_sender, _data,
+                _receivedBytes);
+            message?.Use();
+        }
+    }
+}
+#pragma warning restore CS0618 // Type or member is obsolete
+>>>>>>> Develop

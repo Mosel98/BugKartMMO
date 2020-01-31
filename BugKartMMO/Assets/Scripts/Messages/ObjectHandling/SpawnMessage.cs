@@ -17,7 +17,7 @@ namespace Network.Messages
 
         public SpawnMessage()
         {
-
+           
         }
 
         public SpawnMessage(GameObject _go, bool _localPlayerAuthority = false)
@@ -59,7 +59,7 @@ namespace Network.Messages
                     NetworkBehaviours = new byte[nr.ReadInt32()][];
 
                     int byteLength;
-                    for (int i = 0; i < NetworkBehaviours.Length; i++)
+                    for (int i = 0; i < NetworkBehaviours.GetLength(0); i++)
                     {
                         byteLength = nr.ReadInt32();
                         NetworkBehaviours[i] = nr.ReadBytes(byteLength);

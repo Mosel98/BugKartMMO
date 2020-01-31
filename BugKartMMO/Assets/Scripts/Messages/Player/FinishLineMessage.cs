@@ -50,37 +50,28 @@ namespace Network.Messages
             uint NetID = PlayerController.NetId.NetID;
 
             // player finished race
-            PlayerController.m_FinishedPlayers[NetID] = true;
+        //    PlayerController.m_FinishedPlayers[NetID] = true;
 
-            // set bool to true, when every player has finished the race and can go to endscreen
-            if (!PlayerController.m_FinishedPlayers.ContainsValue(false))
-            {
-                Debug.Log("Yeeeeey Rennen beendet!");
-                PlayerController.m_FinishedRace = true;
-            }
-
-            // counts the finished player
-            int _finishCount = 0;
-
-            // counts the amount of players which finished the race and set the finish place to this count
-          //  for (uint i= 0; i < PlayerController.m_FinishedPlayers.Count; i++)
-          //  {
-          //      if(PlayerController.m_FinishedPlayers[i] == true)
-          //      {
-          //      _finishCount++;
-          //      }
-          //  }
-
-            foreach (var item in PlayerController.m_FinishedPlayers)
-            {
-                if(PlayerController.m_FinishedPlayers.ContainsValue(true))
-                {
-                    _finishCount++;
-                }
-            }
-
-            // set finish place of player 
-            PlayerController.m_finishPlace = _finishCount;
+       //     // set bool to true, when every player has finished the race and can go to endscreen
+       //     if (!PlayerController.m_FinishedPlayers.ContainsValue(false))
+       //     {
+       //         Debug.Log("Yeeeeey Rennen beendet!");
+       //         PlayerController.m_FinishedRace = true;
+       //     }
+       //
+       //     // counts the finished player
+       //     int _finishCount = 0;
+       //
+       //     foreach (var item in PlayerController.m_FinishedPlayers)
+       //     {
+       //         if(PlayerController.m_FinishedPlayers.ContainsValue(true))
+       //         {
+       //             _finishCount++;
+       //         }
+       //     }
+       //
+       //     // set finish place of player 
+       //     PlayerController.m_finishPlace = _finishCount;
             PlayerController.SetIsDirty();
         }
     }

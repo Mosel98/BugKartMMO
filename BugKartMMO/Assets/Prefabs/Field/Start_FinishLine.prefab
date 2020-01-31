@@ -102,6 +102,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5592940460934185052}
   - component: {fileID: -110488679622898181}
+  - component: {fileID: 191289059}
   m_Layer: 0
   m_Name: Start_FinishLine
   m_TagString: Finish
@@ -136,4 +137,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 41e9e4ee0d530e947b85ef4def35a493, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_prefabID: 0
+  m_prefabID: 2
+--- !u!65 &191289059
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5592940460934185053}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 106.55794, y: 15.380814, z: 1}
+  m_Center: {x: 13.312584, y: 0.7355194, z: 0}

@@ -8,14 +8,11 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-
 // Frank
 [DisallowMultipleComponent]
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerController : NetworkBehaviour
 {
-    public TextMeshProUGUI m_AccelerationText;
-    
     [SyncVar]
     public static bool m_isInGame = false;
 
@@ -37,19 +34,13 @@ public class PlayerController : NetworkBehaviour
     private Sprite m_imgShell;
 
     [SyncVar]
-    public static float m_Countdown = 5.0f;
-
-    [SyncVar]
-    private float m_speed = 42.0f;
+    public float m_Speed = 42.0f;
 
     [SyncVar]
     public float m_Acceleration = 0.0f;
 
     [SyncVar]
     private Vector3 m_position;
-
-    //[SyncVar]
-    //public Quaternion m_Rotation;
 
     private Camera m_camera;
 
@@ -60,7 +51,7 @@ public class PlayerController : NetworkBehaviour
     public int m_finishPlace;
 
     [SyncVar]
-    public static bool m_FinishedRace;
+    public bool m_FinishedRace;
 
     //[SyncVar]
     private EItems m_eItem = EItems.EMPTY;
@@ -80,7 +71,6 @@ public class PlayerController : NetworkBehaviour
     {
         m_rigidbody = GetComponent<Rigidbody>();
 
-
         // add player to dictionary
         StartCoroutine(AsyncWaitForNetIdInit());
 
@@ -90,19 +80,23 @@ public class PlayerController : NetworkBehaviour
         m_KeysPressed.Add(KeyCode.A, false);
         m_KeysPressed.Add(KeyCode.D, false);
         m_KeysPressed.Add(KeyCode.Space, false);
-               
-        m_gameUIManager = GameObject.Find("Player UI").GetComponent<GameUIManager>();
-        m_gameUIManager.UpdateItemImage(EItems.EMPTY);
+
+        StartCoroutine(AsyncWaitForUI());
 
         m_camera = GetComponentInChildren<Camera>();
+    }
+
+    private IEnumerator AsyncWaitForUI()
+    {
+        yield return new WaitWhile(() => FindObjectOfType<GameUIManager>() is null);
+        m_gameUIManager = FindObjectOfType<GameUIManager>();
+        m_gameUIManager.UpdateItemImage(EItems.EMPTY);
     }
 
     protected override void Start()
     {
         base.Start();
 
-        m_AccelerationText = GameObject.Find("Player UI/Canvas/Speed_Text").GetComponent<TextMeshProUGUI>();
-               
         if (!IsLocalPlayer)
         {
             m_camera.enabled = false;
@@ -122,9 +116,7 @@ public class PlayerController : NetworkBehaviour
             message.PlayerController = this;
 
             // Server controls if all player are in game scene
-          //  NetworkManager.Instance.SendMessageToServer(message);
             NetworkManager.Instance.SendMessageToClients(message);
-
         }
     }
 
@@ -133,16 +125,8 @@ public class PlayerController : NetworkBehaviour
     {
         base.Update();
 
-        m_AccelerationText.text = m_Acceleration.ToString("0");
-
-        if (IsServer && GameManager.m_gameMode == GameModes.START_GAME)
-        {
-            StartCountdown();
-        }
-
-
         #region --- Server ---
-        if (IsServer && GameManager.m_gameMode == GameModes.DRIVE)
+        if (IsServer && GameManager.GameMode == GameModes.DRIVE)
         {
             #region --- W & S ---
             // keys pressed down (true)
@@ -163,7 +147,7 @@ public class PlayerController : NetworkBehaviour
             {
                 m_Acceleration -= 7.5f * Time.deltaTime;
                 // don't go backwards with handbreak!
-                m_Acceleration = Mathf.Clamp(m_Acceleration, 0.0f, m_speed);
+                m_Acceleration = Mathf.Clamp(m_Acceleration, 0.0f, m_Speed);
             }
             #endregion
 
@@ -178,20 +162,20 @@ public class PlayerController : NetworkBehaviour
                 {
                     // get slower without key press, but not moving backwards
                     m_Acceleration -= 1.5f * Time.deltaTime;
-                    m_Acceleration = Mathf.Clamp(m_Acceleration, 0.0f, m_speed);
+                    m_Acceleration = Mathf.Clamp(m_Acceleration, 0.0f, m_Speed);
                 }
 
                 else if (m_Acceleration < 0)
                 {
                     // get slower backwards without key press, but not moving forwards
                     m_Acceleration += 1.5f * Time.deltaTime;
-                    m_Acceleration = Mathf.Clamp(m_Acceleration, -0.5f * m_speed, 0.0f);
+                    m_Acceleration = Mathf.Clamp(m_Acceleration, -0.5f * m_Speed, 0.0f);
                 }
             }
             #endregion
 
             // clamp acceleration between (max)speed & half (max)speed for backwards movement
-            m_Acceleration = Mathf.Clamp(m_Acceleration, -0.5f * m_speed, m_speed);
+            m_Acceleration = Mathf.Clamp(m_Acceleration, -0.5f * m_Speed, m_Speed);
 
             SetIsDirty();
         }
@@ -206,15 +190,11 @@ public class PlayerController : NetworkBehaviour
 
         #region --- localPlayer ---
         // rotation & movement
-        if (GameManager.m_gameMode == GameModes.DRIVE)
+        if (GameManager.GameMode == GameModes.DRIVE)
         {
-        Rotate();
-        Move();
+            Rotate();
+            Move();
         }
-
-        // update position of camera
-        //m_camera.transform.position = transform.position + m_cameraPositionShift;
-
 
         if ((Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) && m_eItem != EItems.EMPTY)
         {
@@ -222,7 +202,7 @@ public class PlayerController : NetworkBehaviour
             UseItemMessage message = new UseItemMessage();
             message.Player = gameObject;
             message.Item = (float)m_eItem;
-            message.Speed = m_speed;
+            message.Speed = m_Speed;
             message.Accel = m_Acceleration;
 
             NetworkManager.Instance.SendMessageToServer(message);
@@ -233,18 +213,6 @@ public class PlayerController : NetworkBehaviour
         }
 
         #endregion
-    }
-
-    private void StartCountdown()
-    {
-        // Countdown message to start synchronised countdown
-        CountdownMessage message = new CountdownMessage();
-        message.PlayerID = 0;
-        message.PlayerController = this;
-        message.Countdown = m_Countdown;
-        //NetworkManager.Instance.SendMessageToServer(message);
-        NetworkManager.Instance.SendMessageToClients(message);
-
     }
 
     private void Move()
@@ -268,9 +236,7 @@ public class PlayerController : NetworkBehaviour
             }
 
             // Server handles acceleration
-           // NetworkManager.Instance.SendMessageToServer(message);
-            NetworkManager.Instance.SendMessageToClients(message);
-
+            NetworkManager.Instance.SendMessageToServer(message);
         }
         #endregion
 
@@ -292,9 +258,7 @@ public class PlayerController : NetworkBehaviour
                 message.PressedKey = KeyCode.S;
             }
 
-            //NetworkManager.Instance.SendMessageToServer(message);
-            NetworkManager.Instance.SendMessageToClients(message);
-
+            NetworkManager.Instance.SendMessageToServer(message);
         }
         #endregion
 
@@ -308,9 +272,7 @@ public class PlayerController : NetworkBehaviour
             message.PlayerController = this;
 
             // Server handles acceleration
-            //NetworkManager.Instance.SendMessageToServer(message);
-            NetworkManager.Instance.SendMessageToClients(message);
-
+            NetworkManager.Instance.SendMessageToServer(message);
         }
         #endregion
 
@@ -324,9 +286,7 @@ public class PlayerController : NetworkBehaviour
             message.PlayerController = this;
 
             // Server handles acceleration
-            //NetworkManager.Instance.SendMessageToServer(message);
-            NetworkManager.Instance.SendMessageToClients(message);
-
+            NetworkManager.Instance.SendMessageToServer(message);
         }
         #endregion
 
@@ -335,8 +295,6 @@ public class PlayerController : NetworkBehaviour
         direction = direction.normalized * m_Acceleration;
         direction.y = m_rigidbody.velocity.y;
         m_rigidbody.velocity = direction;
-        // m_rigidbody.MovePosition(direction + transform.position);
-
         #endregion
     }
 
@@ -370,13 +328,6 @@ public class PlayerController : NetworkBehaviour
     }
 
     // Mario
-    public void UpdateVariable(float _speed, float _accel)
-    {
-        m_speed = _speed;
-        m_Acceleration = _accel;
-    }
-
-    // Mario
     public void UpdateItem(float _item)
     {
         m_eItem = (EItems)_item;
@@ -387,19 +338,6 @@ public class PlayerController : NetworkBehaviour
     #region --- OnTriggerEnter ---
     private void OnTriggerEnter(Collider other)
     {
-        if (IsServer)
-        {
-            // Spielerelevante Ereignisse
-        }
-        //if (IsLocalPlayer)
-        //{
-
-        //}
-        if (IsClient)
-        {
-
-        }
-
         // Mario
         if (IsServer && other.tag == "Coin" || other.tag == "Köttel" || other.tag == "Shell" || other.tag == "Boost" || other.tag == "ItemBox")
         {
@@ -420,7 +358,7 @@ public class PlayerController : NetworkBehaviour
                 message.Player = gameObject;
                 message.ItemBox = other.gameObject;
                 message.Tag = other.tag;
-                message.Speed = m_speed;
+                message.Speed = m_Speed;
                 message.Accel = m_Acceleration;
 
                 NetworkManager.Instance.SendMessageToClients(message);
@@ -429,13 +367,34 @@ public class PlayerController : NetworkBehaviour
 
         if (IsServer && other.tag == "Finish")
         {
-            FinishLineMessage message = new FinishLineMessage();
-            message.PlayerID = 0;
-            message.PlayerController = this;
-            Debug.Log("Finish Line Message wurde gesendet!!!");
+            if (IsServer && GameManager.GameMode == GameModes.DRIVE)
+            {
+                m_FinishedPlayers[NetId.NetID] = true;
 
-            // Server handles finish race
-            NetworkManager.Instance.SendMessageToClients(message);
+                // set bool to true, when every player has finished the race and can go to endscreen
+                if (!(m_FinishedPlayers.ContainsValue(false)))
+                {
+                    Debug.Log("Yeeeeey Rennen beendet!");
+                    m_FinishedRace = true;
+                    GameManager.GameMode = GameModes.ENDSCREEN;
+                    SetIsDirty();
+                }
+
+                // counts the finished player
+                int _finishCount = 0;
+
+                foreach (var item in m_FinishedPlayers)
+                {
+                    if (m_FinishedPlayers.ContainsValue(true))
+                    {
+                        _finishCount++;
+                    }
+                }
+
+                // set finish place of player 
+                m_finishPlace = _finishCount;
+                SetIsDirty();
+            }
         }
     }
     #endregion
@@ -444,16 +403,6 @@ public class PlayerController : NetworkBehaviour
     public static bool IsInGame()
     {
         return m_isInGame;
-    }
-
-    public static bool GetIsFinished()
-    {
-        return m_FinishedRace;
-    }
-
-    public static float GetCountdown()
-    {
-        return m_Countdown;
     }
 
     private IEnumerator AsyncWaitForNetIdInit()
@@ -470,12 +419,12 @@ public class PlayerController : NetworkBehaviour
 
         if (!m_AllPlayersReady.ContainsKey(NetId.NetID))
         {
-        m_AllPlayersReady.Add(NetId.NetID, false);
+            m_AllPlayersReady.Add(NetId.NetID, false);
         }
 
         if (!m_FinishedPlayers.ContainsKey(NetId.NetID))
         {
-                    m_FinishedPlayers.Add(NetId.NetID, false);
+            m_FinishedPlayers.Add(NetId.NetID, false);
         }
     }
 }

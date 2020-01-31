@@ -20,12 +20,13 @@ public class NetworkItemHandeling : MonoBehaviour
     private float m_accel { get; set; }
 
     [SerializeField]
-    private float m_boostTime = 5.0f;
+    private float m_boostTime = 2.0f;
 
     [SerializeField]
     private float m_itemBoxTime = 5.0f;
 
-    private float m_timer = 0.0f;
+    private float m_timerItem = 0.0f;
+    private float m_timerBox = 0.0f;
 
     private float m_tmpAccel;
 
@@ -138,13 +139,13 @@ public class NetworkItemHandeling : MonoBehaviour
         {
             m_accel = 50.0f;
 
-            m_timer += Time.deltaTime;
+            m_timerItem += Time.deltaTime;
 
-            if (m_timer >= m_boostTime)
+            if (m_timerItem >= m_boostTime)
             {
                 m_accel = m_tmpAccel;
 
-                m_timer = 0.0f;
+                m_timerItem = 0.0f;
                 m_boostSpeed = false;
             }
 
@@ -153,13 +154,13 @@ public class NetworkItemHandeling : MonoBehaviour
 
         if (m_respItemBox)
         {
-            m_timer += Time.deltaTime;
+            m_timerBox += Time.deltaTime;
 
-            if (m_timer >= m_itemBoxTime)
+            if (m_timerBox >= m_itemBoxTime)
             {
                 m_itemBox.SetActive(true);
 
-                m_timer = 0.0f;
+                m_timerBox = 0.0f;
                 m_respItemBox = false;
             }
         }

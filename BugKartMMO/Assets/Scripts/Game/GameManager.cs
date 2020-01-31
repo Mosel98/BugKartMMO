@@ -93,7 +93,7 @@ public class GameManager : NetworkBehaviour
 
         else if (m_countdown <= 0.0F && m_canCount == true)
         {
-            m_countdownText.text = "0";
+            m_countdownText.text = "";
             m_countdown = 0.0F;
             m_countdownText.enabled = false;
 

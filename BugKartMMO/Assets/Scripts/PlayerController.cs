@@ -417,6 +417,7 @@ public class PlayerController : NetworkBehaviour
             FinishLineMessage message = new FinishLineMessage();
             message.PlayerID = 0;
             message.PlayerController = this;
+            Debug.Log("Finish Line Message wurde gesendet!!!");
 
             // Server handles finish race
             NetworkManager.Instance.SendMessageToClients(message);

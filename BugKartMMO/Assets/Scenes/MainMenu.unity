@@ -846,10 +846,9 @@ MonoBehaviour:
   m_AutoSpawnPlayer: 1
   m_prefabs:
   - {fileID: 4373059648560019703, guid: 486394f21010de548ab8526465f93a67, type: 3}
-  - {fileID: 1616492263469373305, guid: 2fbe36ac4436f0649a2051b4e1006cac, type: 3}
+  - {fileID: 2767537024055597088, guid: 12ecc3816400c9c4fb9388cde9c1eb87, type: 3}
   - {fileID: 1322230635101226449, guid: a4a9b5cd17e6f49498bf4f7c87ef5fac, type: 3}
   - {fileID: -2327371998359950994, guid: a33093023a85f9f41b2c578f8939a0fe, type: 3}
-  - {fileID: 2767537024055597088, guid: 12ecc3816400c9c4fb9388cde9c1eb87, type: 3}
   m_LobbyPlayerPrefab: {fileID: 6179224104474470605, guid: 486394f21010de548ab8526465f93a67,
     type: 3}
   m_LobbyScene: Scenes/Lobby

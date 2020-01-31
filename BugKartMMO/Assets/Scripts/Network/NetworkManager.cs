@@ -31,6 +31,13 @@ namespace Network
             }
         }
 
+        public bool isHost
+        {
+            get
+            {
+                return m_isHost;
+            }
+        }
 
         //[SerializeField]
         //private Transform[] m_StartPoint = new Transform[5];
@@ -52,6 +59,7 @@ namespace Network
         protected int m_hostID;
         protected int m_clientID;
         protected bool m_isServer;
+        protected bool m_isHost;
 
         protected List<int> m_allClients = new List<int>();
         protected Dictionary<uint, NetworkIdentity> m_allGameObjects
@@ -171,7 +179,7 @@ namespace Network
 
         public void StartAsHost()
         {
-            StartHost();
+            StartHost();           
         }
 
         public void StartAsClient()
@@ -182,6 +190,8 @@ namespace Network
         protected virtual bool StartHost()
         {
             Initialize();
+
+            m_isHost = true;
 
             m_hostID = NetworkTransport.AddHost(m_hostTopology, m_Port);
 
@@ -356,6 +366,11 @@ namespace Network
 
         public void SendMessageToClients(AMessageBase _message, QosType _channel = QosType.Reliable)
         {
+            if (isHost)
+            {
+                _message.Use();
+            }
+
             int bytesLength;
             byte[] buffer = _message.Serialize(out bytesLength);
 

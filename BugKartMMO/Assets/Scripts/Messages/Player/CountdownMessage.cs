@@ -1,16 +1,17 @@
-﻿using UnityEngine;
+﻿using System.Collections;
+using System.Collections.Generic;
+using UnityEngine;
 using Network.IO;
 using System.IO;
 
 // Frank
 namespace Network.Messages
 {
-    public class AccelerationMessage : AMessageBase
+    public class CountdownMessage : AMessageBase
     {
         public int PlayerID { get; set; }
-        public KeyCode PressedKey { get; set; }
-        public bool PressedDown { get; set; }
         public PlayerController PlayerController { get; set; }
+        public float Countdown { get; set; }
 
         public override byte[] Serialize(out int _bytes)
         {
@@ -18,12 +19,11 @@ namespace Network.Messages
             {
                 using (NetworkWriter nw = new NetworkWriter(ms))
                 {
-                    nw.Write((short)EMessageType.ACCELERATION_CHANGE);
+                    nw.Write((short)EMessageType.COUNTDOWN);
 
                     nw.Write(PlayerID);
-                    nw.Write((short)PressedKey);
-                    nw.Write(PressedDown);
                     nw.Write(PlayerController.GetComponent<NetworkIdentity>());
+                    nw.Write(Countdown);
 
                     _bytes = (int)ms.Position;
                     return ms.ToArray();
@@ -41,16 +41,16 @@ namespace Network.Messages
                     nr.ReadInt16();
 
                     PlayerID = nr.ReadInt32();
-                    PressedKey = (KeyCode)nr.ReadInt16();
-                    PressedDown = nr.ReadBoolean();
                     PlayerController = nr.ReadNetworkIdentity().GetComponent<PlayerController>();
+                    Countdown = nr.ReadSingle();
                 }
             }
         }
 
         public override void Use()
         {
-            PlayerController.m_KeysPressed[PressedKey] = PressedDown;
+            PlayerController.m_Countdown = Countdown;
+            PlayerController.SetIsDirty();
         }
     }
 }

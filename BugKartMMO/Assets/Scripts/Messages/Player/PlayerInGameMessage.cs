@@ -11,7 +11,6 @@ namespace Network.Messages
     {
         public int PlayerID { get; set; }
         public PlayerController PlayerController { get; set; }
-        public int SlotID { get; set; }
 
         public override byte[] Serialize(out int _bytes)
         {
@@ -23,7 +22,6 @@ namespace Network.Messages
 
                     nw.Write(PlayerID);
                     nw.Write(PlayerController.GetComponent<NetworkIdentity>());
-                    nw.Write(SlotID);
 
                     _bytes = (int)ms.Position;
                     return ms.ToArray();
@@ -42,7 +40,6 @@ namespace Network.Messages
 
                     PlayerID = nr.ReadInt32();
                     PlayerController = nr.ReadNetworkIdentity().GetComponent<PlayerController>();
-                    SlotID = nr.ReadInt32();
                 }
             }
         }
@@ -52,7 +49,9 @@ namespace Network.Messages
             // GameManager.SetGameMode(GameModes.START_GAME);
             // GameManager.SetIsDirty();
 
-            PlayerController.m_AllPlayersReady[SlotID] = true;
+            uint NetID = PlayerController.NetId.NetID;
+
+            PlayerController.m_AllPlayersReady[NetID] = true;
 
             if (!PlayerController.m_AllPlayersReady.ContainsValue(false))
             {

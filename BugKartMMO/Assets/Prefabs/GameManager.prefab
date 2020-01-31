@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 41e9e4ee0d530e947b85ef4def35a493, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_prefabID: 0
+  m_prefabID: 5
 --- !u!114 &2767537024055597151
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -58,7 +58,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c394436b779738244a686f5e44698d75, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_gameMode: 0
+  m_countdownText: {fileID: 0}
 --- !u!114 &2767537024055597150
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -75,5 +75,5 @@ MonoBehaviour:
   m_imgEmpty: {fileID: 21300000, guid: bee530088e8991d41ad21a10a39b2a17, type: 3}
   m_imgCoin: {fileID: 21300000, guid: f459c14945ef97e44b66ea7eab2a767f, type: 3}
   m_imgMush: {fileID: 21300000, guid: 33ff89e01f0e358409a54ffb68a345cd, type: 3}
-  "m_imgK\xF6ttel": {fileID: 0}
-  m_imgShell: {fileID: 0}
+  "m_imgK\xF6ttel": {fileID: 21300000, guid: a3858ad857dd3e945929964182f0434c, type: 3}
+  m_imgShell: {fileID: 21300000, guid: 1c3c6d347a023ed4c87df57d01f89512, type: 3}

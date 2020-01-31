@@ -23,12 +23,14 @@ namespace Network.Messages
             SWITCH_SCENE,
             HONK_MESSAGE,
 
+            COUNTDOWN, // Frank
             PLAYER_IN_GAME, // Frank
             ACCELERATION_CHANGE, // Frank
             FINISH_LINE, // Frank
             COLLISION_CHECK, // Mario
             UPDATE_VARIABLE, // Mario
             CHANGE_COLOR,   // Tamara
+            USE_ITEM, // Mario
 
             LOBBY_MESSAGES = 10_000,
             LOBBY_REQUEST_JOIN,
@@ -92,6 +94,10 @@ namespace Network.Messages
                     break;
 
                 // Frank
+                case EMessageType.COUNTDOWN:
+                    message = new CountdownMessage();
+                    break;
+                // Frank
                 case EMessageType.PLAYER_IN_GAME:
                     message = new PlayerInGameMessage();
                     break;
@@ -103,18 +109,7 @@ namespace Network.Messages
                 case EMessageType.FINISH_LINE:
                     message = new FinishLineMessage();
                     break;
-                // Frank
-                //  case EMessageType.CONTROL_CHANGE:
-                //      message = new ControlMessage();
-                //      break;
-                //      // Frank
-                // case EMessageType.SPEED_ACC_NULL:
-                //     message = new HandbreakMessage();
-                //     break;
-                // Frank
-                //  case EMessageType.ROTATION_CHANGE:
-                //      message = new RotationMessage();
-                //      break;
+
                 // Mario
                 case EMessageType.COLLISION_CHECK:
                     message = new CollisionCheckMessage();
@@ -126,7 +121,10 @@ namespace Network.Messages
                 case EMessageType.CHANGE_COLOR:
                     message = new ChangeColorMessage();
                     break;
-
+                // Mario
+                case EMessageType.USE_ITEM:
+                    message = new UseItemMessage();
+                    break;
 
                 case EMessageType.LOBBY_ACCEPT_JOIN:
                     message = new LobbyAcceptJoinMessage();

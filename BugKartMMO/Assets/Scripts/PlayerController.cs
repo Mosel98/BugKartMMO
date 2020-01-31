@@ -34,14 +34,12 @@ public class PlayerController : NetworkBehaviour
     private Sprite m_imgShell;
 
     [SyncVar]
-    private float m_countdown = 5.0f;
+    public static float m_Countdown = 5.0f;
 
     private static bool m_canStart = false;
 
-
-
     [SyncVar]
-    private float m_speed = 1.0f;
+    private float m_speed = 25.0f;
 
     [SyncVar]
     public float m_Acceleration = 0.0f;
@@ -49,13 +47,13 @@ public class PlayerController : NetworkBehaviour
     [SyncVar]
     private Vector3 m_position;
 
-    [SyncVar]
-    public Quaternion m_Rotation;
+    //[SyncVar]
+    //public Quaternion m_Rotation;
 
-    private Camera m_camera; // Position?! --> testen und festlegen!
+    private Camera m_camera;
 
     // vector shift of the camera based on player position
-    // private Vector3 m_cameraPositionShift;
+    private Vector3 m_cameraPositionShift;
 
     [SyncVar]
     public int m_finishPlace;
@@ -93,18 +91,32 @@ public class PlayerController : NetworkBehaviour
         m_KeysPressed.Add(KeyCode.D, false);
         m_KeysPressed.Add(KeyCode.Space, false);
 
-        m_camera = GetComponent<Camera>();
+
+<<<<<<< HEAD
+        m_gameUIManager = GameObject.Find("GameManager").GetComponent<GameUIManager>();
+        m_gameUIManager.UpdateItemImage(EItems.EMPTY);
+=======
+        m_camera = GetComponentInChildren<Camera>();
+
+
 
         m_gameUIManager = GameObject.Find("GameManager").GetComponent<GameUIManager>();
         m_gameUIManager.UpdateItemImage(EItems.EMPTY);
 
-        // m_cameraPositionShift.Set(0.0f, 15.0f, -25.0f); // Verschiebung der Kamera
-        // m_camera.transform.position = transform.position + m_cameraPositionShift;
+>>>>>>> Develop
+
     }
 
     protected override void Start()
     {
         base.Start();
+
+        if (!IsLocalPlayer)
+        {
+            m_camera.enabled = false;
+            // m_cameraPositionShift.Set(0.0f, 15.0f, -25.0f); // Verschiebung der Kamera
+            // m_camera.transform.position = transform.position + m_cameraPositionShift;
+        }
 
         #region --- != localPlayer ---
         if (!IsLocalPlayer)
@@ -130,7 +142,7 @@ public class PlayerController : NetworkBehaviour
     {
         base.Update();
 
-        if (IsServer) // && START_GAME)
+        if (IsServer)// && GameManager.m_gameMode == GameModes.START_GAME)
         {
             StartCountdown();
         }
@@ -143,12 +155,12 @@ public class PlayerController : NetworkBehaviour
             // keys pressed down (true)
             if (m_KeysPressed[KeyCode.W])
             {
-                m_Acceleration += 0.5f * Time.deltaTime;
+                m_Acceleration += 1.25f * Time.deltaTime;
             }
 
             if (m_KeysPressed[KeyCode.S])
             {
-                m_Acceleration -= 0.5f * Time.deltaTime;
+                m_Acceleration -= 1.25f * Time.deltaTime;
             }
             #endregion
 
@@ -156,7 +168,7 @@ public class PlayerController : NetworkBehaviour
             // handbreak, faster decrease speed
             if (m_KeysPressed[KeyCode.Space])
             {
-                m_Acceleration -= 1.0f * Time.deltaTime;
+                m_Acceleration -= 0.75f * Time.deltaTime;
                 // don't go backwards with handbreak!
                 m_Acceleration = Mathf.Clamp(m_Acceleration, 0.0f, m_speed);
             }
@@ -172,14 +184,14 @@ public class PlayerController : NetworkBehaviour
                 if (m_Acceleration > 0)
                 {
                     // get slower without key press, but not moving backwards
-                    m_Acceleration -= 0.5f * Time.deltaTime;
+                    m_Acceleration -= 0.25f * Time.deltaTime;
                     m_Acceleration = Mathf.Clamp(m_Acceleration, 0.0f, m_speed);
                 }
 
                 else if (m_Acceleration < 0)
                 {
                     // get slower backwards without key press, but not moving forwards
-                    m_Acceleration += 0.5f * Time.deltaTime;
+                    m_Acceleration += 0.25f * Time.deltaTime;
                     m_Acceleration = Mathf.Clamp(m_Acceleration, -0.5f * m_speed, 0.0f);
                 }
             }
@@ -227,10 +239,12 @@ public class PlayerController : NetworkBehaviour
 
     private void StartCountdown()
     {
-        // Countdown zählt runter
-
-        if (m_countdown <= 0.0f)
-            m_canStart = true;
+        // Countdown message to start synchronised countdown
+        CountdownMessage message = new CountdownMessage();
+        message.PlayerID = 0;
+        message.PlayerController = this;
+        message.Countdown = m_Countdown;
+        NetworkManager.Instance.SendMessageToServer(message);
     }
 
     private void Move()
@@ -311,8 +325,9 @@ public class PlayerController : NetworkBehaviour
         #region --- movement ---
         Vector3 direction = transform.forward;
         direction = direction.normalized * m_Acceleration;
-        //direction.y = m_rigidbody.velocity.y;
-        m_rigidbody.MovePosition(transform.position + direction);
+        direction.y = m_rigidbody.velocity.y;
+        m_rigidbody.velocity = direction;
+        // m_rigidbody.MovePosition(direction + transform.position);
 
         #endregion
     }
@@ -432,4 +447,8 @@ public class PlayerController : NetworkBehaviour
         return m_FinishedRace;
     }
 
+    public static float GetCountdown()
+    {
+        return m_Countdown;
+    }
 }

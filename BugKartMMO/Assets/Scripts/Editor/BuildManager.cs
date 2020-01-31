@@ -18,11 +18,9 @@ public class BuildManager
         buildOptions.scenes = new string[] 
         {
             // --> only relevant scenes for game!
-           // "Assets/Scenes/SampleScene.unity", 
             "Assets/Scenes/MainMenu.unity",
             "Assets/Scenes/Lobby.unity",
             "Assets/Scenes/Game.unity",
-            "Assets/Scenes/Endscreen.unity"
         };
         buildOptions.target = BuildTarget.StandaloneWindows;
         buildOptions.options = BuildOptions.None;

@@ -28,6 +28,7 @@ namespace Network.Messages
             FINISH_LINE, // Frank
             COLLISION_CHECK, // Mario
             UPDATE_VARIABLE, // Mario
+            CHANGE_COLOR,   // Tamara
 
             LOBBY_MESSAGES = 10_000,
             LOBBY_REQUEST_JOIN,
@@ -121,6 +122,9 @@ namespace Network.Messages
                 // Mario
                 case EMessageType.UPDATE_VARIABLE:
                     message = new UpdateVariableMessage();
+                    break;
+                case EMessageType.CHANGE_COLOR:
+                    message = new ChangeColorMessage();
                     break;
 
 

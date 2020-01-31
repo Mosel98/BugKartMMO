@@ -579,12 +579,8 @@ namespace Network
         {
             NetworkIdentity go;
             Renderer[] rend;
-
-            //for (int i = 0; i < m_allClients.Count; i++)
-            //{
-            //    
-            //}
-
+            ChangeColorMessage message;
+            
             // Check in which Slot ever Player was in the Lobby and at which Start Position he is allowed to spawn
             switch (_id)
             {
@@ -592,14 +588,15 @@ namespace Network
                     Debug.Log("Player One");
                     // Instantiate(m_Player, Hier Gewünschte Position eingeben, transform.parent.rotation);
                     go = Instantiate(m_PlayerPrefab, new Vector3(275.97f, 1, 555), Quaternion.identity);
+                    
+                    
+                    message = new ChangeColorMessage();
+                    message.Color = Color.blue;
+                    message.Player = go.GetComponent<PlayerController>();
 
-                    //// change Color of Player
-                    rend = go.GetComponentsInChildren<Renderer>();
-                    foreach (Renderer r in rend)
-                    {
-                        r.material.color = Color.blue;
-                    }
-
+                    Instance.SendMessageToClients(message);
+                    
+                    
                     SpawnGameObjectAsLocalPlayer(go.gameObject, _id);
                     break;
                 case 3:
@@ -608,11 +605,11 @@ namespace Network
                     go = Instantiate(m_PlayerPrefab, new Vector3(285.32f, 1, 555), Quaternion.identity);
 
                     //// change Color of Player
-                    rend = go.GetComponentsInChildren<Renderer>();
-                    foreach (Renderer r in rend)
-                    {
-                        r.material.color = Color.red;
-                    }
+                    message = new ChangeColorMessage();
+                    message.Color = Color.red;
+                    message.Player = go.GetComponent<PlayerController>();
+
+                    Instance.SendMessageToClients(message);
 
                     SpawnGameObjectAsLocalPlayer(go.gameObject, _id);
                     break;
@@ -622,11 +619,11 @@ namespace Network
                 go = Instantiate(m_PlayerPrefab, new Vector3(295.52f, 1, 555), Quaternion.identity);
 
                     //// change Color of Player
-                    rend = go.GetComponentsInChildren<Renderer>();
-                    foreach (Renderer r in rend)
-                    {
-                        r.material.color = Color.green;
-                    }
+                    message = new ChangeColorMessage();
+                    message.Color = Color.green;
+                    message.Player = go.GetComponent<PlayerController>();
+
+                    Instance.SendMessageToClients(message);
 
                     SpawnGameObjectAsLocalPlayer(go.gameObject, _id);
                   break;
@@ -637,11 +634,11 @@ namespace Network
 
 
                     //// change Color of Player
-                    rend = go.GetComponentsInChildren<Renderer>();
-                    foreach (Renderer r in rend)
-                    {
-                        r.material.color = Color.magenta;
-                    }
+                    message = new ChangeColorMessage();
+                    message.Color = Color.magenta;
+                    message.Player = go.GetComponent<PlayerController>();
+
+                    Instance.SendMessageToClients(message);
 
                     SpawnGameObjectAsLocalPlayer(go.gameObject, _id);
                    break;
@@ -652,11 +649,11 @@ namespace Network
 
 
                     //// change Color of Player
-                    rend = go.GetComponentsInChildren<Renderer>();
-                    foreach (Renderer r in rend)
-                    {
-                        r.material.color = Color.gray;
-                    }
+                    message = new ChangeColorMessage();
+                    message.Color = Color.grey;
+                    message.Player = go.GetComponent<PlayerController>();
+
+                    Instance.SendMessageToClients(message);
 
                     SpawnGameObjectAsLocalPlayer(go.gameObject, _id);
                    break;

@@ -16,7 +16,7 @@ public class PlayerController : NetworkBehaviour
     [SyncVar]
     public static bool m_isInGame = false;
 
-    private Image m_itemImage;
+    private GameUIManager m_gameUIManager;
 
     [SerializeField]
     private Sprite m_imgEmpty;
@@ -95,8 +95,8 @@ public class PlayerController : NetworkBehaviour
 
         m_camera = GetComponent<Camera>();
 
-        m_itemImage = GameObject.Find("Player UI/Canvas/Item_Image").GetComponent<Image>();
-        m_itemImage.sprite = m_imgEmpty;
+        m_gameUIManager = GameObject.Find("GameManager").GetComponent<GameUIManager>();
+        m_gameUIManager.UpdateItemImage(EItems.EMPTY);
 
         // m_cameraPositionShift.Set(0.0f, 15.0f, -25.0f); // Verschiebung der Kamera
         // m_camera.transform.position = transform.position + m_cameraPositionShift;
@@ -216,7 +216,7 @@ public class PlayerController : NetworkBehaviour
 
             m_eItem = EItems.EMPTY;
 
-            m_itemImage.sprite = m_imgEmpty;
+            m_gameUIManager.UpdateItemImage(m_eItem);
         }
 
         #endregion
@@ -356,21 +356,7 @@ public class PlayerController : NetworkBehaviour
     {
         m_eItem = (EItems)_item;
 
-        switch ((EItems)_item)
-        {
-            case EItems.COIN:
-                m_itemImage.sprite = m_imgCoin;
-                break;
-            case EItems.MUSHROOM:
-                m_itemImage.sprite = m_imgMush;
-                break;
-            case EItems.KÖTTEL:
-                m_itemImage.sprite = m_imgKöttel;
-                break;
-            case EItems.GREENSHELL:
-                m_itemImage.sprite = m_imgShell;
-                break;
-        }
+        m_gameUIManager.UpdateItemImage(m_eItem);
     }
 
     #region --- OnTriggerEnter ---

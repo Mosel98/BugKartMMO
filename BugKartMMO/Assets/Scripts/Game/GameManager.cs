@@ -40,36 +40,42 @@ public class GameManager : NetworkBehaviour
                 case GameModes.MENU:
                     if (PlayerController.IsInGame() == true)
                     {
+                        Debug.Log("Mode Menu");
                         m_gameMode = GameModes.START_GAME;
                     }
                     break;
                 case GameModes.START_GAME:
-                    if (PlayerController.GetCanStart() == true)
-                    {
+                    Debug.Log("Mode Start Game");
+                   // if (PlayerController.GetCanStart() == true)
+                   // {
                         StartCountdown();
                         //m_gameMode = GameModes.DRIVE; --> steht unten
-                    }
+                   // }
                     break;
                 case GameModes.DRIVE:
+                    Debug.Log("Mode Drive");
                     if (PlayerController.GetIsFinished() == true)
                     {
                         m_gameMode = GameModes.ENDSCREEN;
                     }
                     break;
                 case GameModes.CLIENT_DISCONNECT:
-                    // Button Lobby hit
+                    Debug.Log("Mode Client Disconnect");
+                                    // Button Lobby hit
                     //if ()
                     //{
                     //    m_gameMode = GameModes.CLIENT_DISCONNECT;
                     //}
                     break;
                 case GameModes.ENDSCREEN:
+                    Debug.Log("Mode Endscreen");
                     if (PlayerController.GetIsFinished() == true)
                     {
                         m_gameMode = GameModes.RESET;
                     }
                     break;
                 case GameModes.RESET:
+                    Debug.Log("Mode Reset");
 
                     m_gameMode = GameModes.MENU;
                     break;

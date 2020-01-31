@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using UnityEngine;
 using UnityEngine.UI;
+using TMPro;
 
 
 // Frank
@@ -13,6 +14,8 @@ using UnityEngine.UI;
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerController : NetworkBehaviour
 {
+    public TextMeshProUGUI m_AccelerationText;
+    
     [SyncVar]
     public static bool m_isInGame = false;
 
@@ -39,7 +42,7 @@ public class PlayerController : NetworkBehaviour
     private static bool m_canStart = false;
 
     [SyncVar]
-    private float m_speed = 25.0f;
+    private float m_speed = 42.0f;
 
     [SyncVar]
     public float m_Acceleration = 0.0f;
@@ -79,6 +82,8 @@ public class PlayerController : NetworkBehaviour
     {
         m_rigidbody = GetComponent<Rigidbody>();
 
+        m_AccelerationText = GameObject.Find("Player UI/Canvas/Speed_Text").GetComponent<TextMeshProUGUI>();
+
         // add player to dictionary
         StartCoroutine(AsyncWaitForNetIdInit());
 
@@ -88,19 +93,17 @@ public class PlayerController : NetworkBehaviour
         m_KeysPressed.Add(KeyCode.A, false);
         m_KeysPressed.Add(KeyCode.D, false);
         m_KeysPressed.Add(KeyCode.Space, false);
-
-
+               
         m_gameUIManager = GameObject.Find("GameManager").GetComponent<GameUIManager>();
         m_gameUIManager.UpdateItemImage(EItems.EMPTY);
 
         m_camera = GetComponentInChildren<Camera>();
-
     }
 
     protected override void Start()
     {
         base.Start();
-
+               
         if (!IsLocalPlayer)
         {
             m_camera.enabled = false;
@@ -131,6 +134,8 @@ public class PlayerController : NetworkBehaviour
     {
         base.Update();
 
+        m_AccelerationText.text = m_Acceleration.ToString("0");
+
         if (IsServer && GameManager.m_gameMode == GameModes.START_GAME)
         {
             StartCountdown();
@@ -144,12 +149,12 @@ public class PlayerController : NetworkBehaviour
             // keys pressed down (true)
             if (m_KeysPressed[KeyCode.W])
             {
-                m_Acceleration += 1.25f * Time.deltaTime;
+                m_Acceleration += 4.5f * Time.deltaTime;
             }
 
             if (m_KeysPressed[KeyCode.S])
             {
-                m_Acceleration -= 1.25f * Time.deltaTime;
+                m_Acceleration -= 4.5f * Time.deltaTime;
             }
             #endregion
 
@@ -157,7 +162,7 @@ public class PlayerController : NetworkBehaviour
             // handbreak, faster decrease speed
             if (m_KeysPressed[KeyCode.Space])
             {
-                m_Acceleration -= 0.75f * Time.deltaTime;
+                m_Acceleration -= 7.5f * Time.deltaTime;
                 // don't go backwards with handbreak!
                 m_Acceleration = Mathf.Clamp(m_Acceleration, 0.0f, m_speed);
             }
@@ -173,14 +178,14 @@ public class PlayerController : NetworkBehaviour
                 if (m_Acceleration > 0)
                 {
                     // get slower without key press, but not moving backwards
-                    m_Acceleration -= 0.25f * Time.deltaTime;
+                    m_Acceleration -= 1.5f * Time.deltaTime;
                     m_Acceleration = Mathf.Clamp(m_Acceleration, 0.0f, m_speed);
                 }
 
                 else if (m_Acceleration < 0)
                 {
                     // get slower backwards without key press, but not moving forwards
-                    m_Acceleration += 0.25f * Time.deltaTime;
+                    m_Acceleration += 1.5f * Time.deltaTime;
                     m_Acceleration = Mathf.Clamp(m_Acceleration, -0.5f * m_speed, 0.0f);
                 }
             }
@@ -202,8 +207,11 @@ public class PlayerController : NetworkBehaviour
 
         #region --- localPlayer ---
         // rotation & movement
+        if (GameManager.m_gameMode == GameModes.DRIVE)
+        {
         Rotate();
         Move();
+        }
 
         // update position of camera
         //m_camera.transform.position = transform.position + m_cameraPositionShift;

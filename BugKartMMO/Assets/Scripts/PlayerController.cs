@@ -36,11 +36,11 @@ public class PlayerController : NetworkBehaviour
     [SerializeField]
     private Sprite m_imgShell;
 
-    [SyncVar]
-    public static float m_Countdown = 5.0f;
+    //[SyncVar]
+    //public static float m_Countdown = 5.0f;
 
     [SyncVar]
-    private float m_speed = 42.0f;
+    public float m_speed = 42.0f;
 
     [SyncVar]
     public float m_Acceleration = 0.0f;
@@ -60,7 +60,7 @@ public class PlayerController : NetworkBehaviour
     public int m_finishPlace;
 
     [SyncVar]
-    public static bool m_FinishedRace;
+    public bool m_FinishedRace;
 
     //[SyncVar]
     private EItems m_eItem = EItems.EMPTY;
@@ -90,18 +90,23 @@ public class PlayerController : NetworkBehaviour
         m_KeysPressed.Add(KeyCode.A, false);
         m_KeysPressed.Add(KeyCode.D, false);
         m_KeysPressed.Add(KeyCode.Space, false);
-               
-        m_gameUIManager = GameObject.Find("Player UI").GetComponent<GameUIManager>();
-        m_gameUIManager.UpdateItemImage(EItems.EMPTY);
+
+        StartCoroutine(AsyncWaitForUI());
 
         m_camera = GetComponentInChildren<Camera>();
+    }
+
+    private IEnumerator AsyncWaitForUI()
+    {
+        yield return new WaitWhile(() => FindObjectOfType<GameUIManager>() is null);
+        m_gameUIManager = FindObjectOfType<GameUIManager>();
+        m_gameUIManager.UpdateItemImage(EItems.EMPTY);
+        m_AccelerationText = GameObject.Find("Player UI/Canvas/Speed_Text").GetComponent<TextMeshProUGUI>();
     }
 
     protected override void Start()
     {
         base.Start();
-
-        m_AccelerationText = GameObject.Find("Player UI/Canvas/Speed_Text").GetComponent<TextMeshProUGUI>();
                
         if (!IsLocalPlayer)
         {
@@ -133,16 +138,18 @@ public class PlayerController : NetworkBehaviour
     {
         base.Update();
 
-        m_AccelerationText.text = m_Acceleration.ToString("0");
+        if (m_AccelerationText is object)
+            m_AccelerationText.text = m_Acceleration.ToString("0");
 
-        if (IsServer && GameManager.m_gameMode == GameModes.START_GAME)
-        {
-            StartCountdown();
-        }
+     //   if (IsServer && GameManager.GameMode == GameModes.START_GAME)
+     //   {
+     //       StartCountdown();
+     //   }
 
+        
 
         #region --- Server ---
-        if (IsServer && GameManager.m_gameMode == GameModes.DRIVE)
+        if (IsServer && GameManager.GameMode == GameModes.DRIVE)
         {
             #region --- W & S ---
             // keys pressed down (true)
@@ -206,7 +213,7 @@ public class PlayerController : NetworkBehaviour
 
         #region --- localPlayer ---
         // rotation & movement
-        if (GameManager.m_gameMode == GameModes.DRIVE)
+        if (GameManager.GameMode == GameModes.DRIVE)
         {
         Rotate();
         Move();
@@ -235,17 +242,17 @@ public class PlayerController : NetworkBehaviour
         #endregion
     }
 
-    private void StartCountdown()
-    {
-        // Countdown message to start synchronised countdown
-        CountdownMessage message = new CountdownMessage();
-        message.PlayerID = 0;
-        message.PlayerController = this;
-        message.Countdown = m_Countdown;
-        //NetworkManager.Instance.SendMessageToServer(message);
-        NetworkManager.Instance.SendMessageToClients(message);
-
-    }
+  // private void StartCountdown()
+  // {
+  //     // Countdown message to start synchronised countdown
+  //     CountdownMessage message = new CountdownMessage();
+  //     message.PlayerID = 0;
+  //     message.PlayerController = this;
+  //     message.Countdown = m_Countdown;
+  //     //NetworkManager.Instance.SendMessageToServer(message);
+  //     NetworkManager.Instance.SendMessageToClients(message);
+  //
+  // }
 
     private void Move()
     {
@@ -268,8 +275,8 @@ public class PlayerController : NetworkBehaviour
             }
 
             // Server handles acceleration
-           // NetworkManager.Instance.SendMessageToServer(message);
-            NetworkManager.Instance.SendMessageToClients(message);
+            NetworkManager.Instance.SendMessageToServer(message);
+           // NetworkManager.Instance.SendMessageToClients(message);
 
         }
         #endregion
@@ -292,8 +299,8 @@ public class PlayerController : NetworkBehaviour
                 message.PressedKey = KeyCode.S;
             }
 
-            //NetworkManager.Instance.SendMessageToServer(message);
-            NetworkManager.Instance.SendMessageToClients(message);
+            NetworkManager.Instance.SendMessageToServer(message);
+            //NetworkManager.Instance.SendMessageToClients(message);
 
         }
         #endregion
@@ -308,8 +315,8 @@ public class PlayerController : NetworkBehaviour
             message.PlayerController = this;
 
             // Server handles acceleration
-            //NetworkManager.Instance.SendMessageToServer(message);
-            NetworkManager.Instance.SendMessageToClients(message);
+            NetworkManager.Instance.SendMessageToServer(message);
+            //NetworkManager.Instance.SendMessageToClients(message);
 
         }
         #endregion
@@ -324,8 +331,8 @@ public class PlayerController : NetworkBehaviour
             message.PlayerController = this;
 
             // Server handles acceleration
-            //NetworkManager.Instance.SendMessageToServer(message);
-            NetworkManager.Instance.SendMessageToClients(message);
+            NetworkManager.Instance.SendMessageToServer(message);
+            //NetworkManager.Instance.SendMessageToClients(message);
 
         }
         #endregion
@@ -429,13 +436,45 @@ public class PlayerController : NetworkBehaviour
 
         if (IsServer && other.tag == "Finish")
         {
-            FinishLineMessage message = new FinishLineMessage();
-            message.PlayerID = 0;
-            message.PlayerController = this;
-            Debug.Log("Finish Line Message wurde gesendet!!!");
+            if (IsServer && GameManager.GameMode == GameModes.DRIVE)
+            {
+                m_FinishedPlayers[NetId.NetID] = true;
 
-            // Server handles finish race
-            NetworkManager.Instance.SendMessageToClients(message);
+                // set bool to true, when every player has finished the race and can go to endscreen
+                if (!(m_FinishedPlayers.ContainsValue(false)))
+                {
+                    Debug.Log("Yeeeeey Rennen beendet!");
+                    m_FinishedRace = true;
+                    GameManager.GameMode = GameModes.ENDSCREEN;
+                    SetIsDirty();
+
+                 //   FinishLineMessage message = new FinishLineMessage();
+                 //   message.PlayerID = 0;
+                 //   message.PlayerController = this;
+                 //   Debug.Log("Finish Line Message wurde gesendet!!!");
+                 //
+                 //   // Server handles finish race
+                 //   NetworkManager.Instance.SendMessageToClients(message);
+                }
+
+                // counts the finished player
+                int _finishCount = 0;
+
+                foreach (var item in m_FinishedPlayers)
+                {
+                    if (m_FinishedPlayers.ContainsValue(true))
+                    {
+                        _finishCount++;
+                    }
+                }
+
+                // set finish place of player 
+                m_finishPlace = _finishCount;
+                SetIsDirty();
+            }
+
+
+            
         }
     }
     #endregion
@@ -446,15 +485,11 @@ public class PlayerController : NetworkBehaviour
         return m_isInGame;
     }
 
-    public static bool GetIsFinished()
-    {
-        return m_FinishedRace;
-    }
 
-    public static float GetCountdown()
-    {
-        return m_Countdown;
-    }
+  //  public static float GetCountdown()
+  //  {
+  //      return m_Countdown;
+  //  }
 
     private IEnumerator AsyncWaitForNetIdInit()
     {

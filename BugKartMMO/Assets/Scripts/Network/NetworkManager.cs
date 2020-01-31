@@ -1,4 +1,4 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
@@ -366,7 +366,7 @@ namespace Network
 
         public void SendMessageToClients(AMessageBase _message, QosType _channel = QosType.Reliable)
         {
-            if (isHost)
+            if (isHost && !(_message is SpawnMessage))
             {
                 _message.Use();
             }

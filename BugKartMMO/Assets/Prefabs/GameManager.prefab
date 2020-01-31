@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 2767537024055597149}
   - component: {fileID: 2767537024055597088}
   - component: {fileID: 2767537024055597151}
-  - component: {fileID: 2767537024055597150}
   m_Layer: 0
   m_Name: GameManager
   m_TagString: Untagged
@@ -45,7 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 41e9e4ee0d530e947b85ef4def35a493, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_prefabID: 5
+  m_prefabID: 2
 --- !u!114 &2767537024055597151
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -59,21 +58,3 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_countdownText: {fileID: 0}
---- !u!114 &2767537024055597150
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2767537024055597148}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 68ed8ab03039d4f46bd7b376d72c758b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_itemImage: {fileID: 0}
-  m_imgEmpty: {fileID: 21300000, guid: bee530088e8991d41ad21a10a39b2a17, type: 3}
-  m_imgCoin: {fileID: 21300000, guid: f459c14945ef97e44b66ea7eab2a767f, type: 3}
-  m_imgMush: {fileID: 21300000, guid: 33ff89e01f0e358409a54ffb68a345cd, type: 3}
-  "m_imgK\xF6ttel": {fileID: 21300000, guid: a3858ad857dd3e945929964182f0434c, type: 3}
-  m_imgShell: {fileID: 21300000, guid: 1c3c6d347a023ed4c87df57d01f89512, type: 3}

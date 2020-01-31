@@ -19,49 +19,69 @@ public class GameManager : NetworkBehaviour
     // if Player disconnects == game stop --> back to lobby
     // 
 
+    public static GameModes GameMode
+    {
+        get
+        {
+            GameManager m = FindObjectOfType<GameManager>();
+            if (m is object)
+            {
+                return m.m_gameMode;
+            }
+            else
+            {
+                return GameModes.MENU;
+            }
+        }
+        set
+        {
+            FindObjectOfType<GameManager>().m_gameMode = value;
+        }
+    }
+
     [SyncVar]
-    public static GameModes m_gameMode;
+    public GameModes m_gameMode;
     private GameObject[] m_allPlayers;
 
     public TextMeshProUGUI m_countdownText;
     private bool m_canCount = true;
 
+    [SyncVar("countdownchanged")]
+    private float m_countdown = 5.0f;
+
+    private float m_nextSync = 5;
+
+
     protected virtual void Awake()
     {
-        DontDestroyOnLoad(this.gameObject);
+        //DontDestroyOnLoad(this.gameObject);
     }
 
     protected override void Update()
     {
+        base.Update();
+
         if (IsServer)
         {
-            switch (m_gameMode)
+            switch (GameMode)
             {
                 case GameModes.MENU:
                     if (PlayerController.IsInGame() == true)
                     {
                         Debug.Log("Mode Menu");
-                        m_gameMode = GameModes.START_GAME;
+                        GameMode = GameModes.START_GAME;
                     }
                     break;
                 case GameModes.START_GAME:
                     Debug.Log("Mode Start Game");
-                   // if (PlayerController.GetCanStart() == true)
-                   // {
-                        StartCountdown();
-                        //m_gameMode = GameModes.DRIVE; --> steht unten
-                   // }
+                    StartCountdown();
                     break;
                 case GameModes.DRIVE:
                     Debug.Log("Mode Drive");
-                    if (PlayerController.GetIsFinished() == true)
-                    {
-                        m_gameMode = GameModes.ENDSCREEN;
-                    }
                     break;
                 case GameModes.CLIENT_DISCONNECT:
                     Debug.Log("Mode Client Disconnect");
-                                    // Button Lobby hit
+                    // Button Lobby hit
                     //if ()
                     //{
                     //    m_gameMode = GameModes.CLIENT_DISCONNECT;
@@ -69,16 +89,14 @@ public class GameManager : NetworkBehaviour
                     break;
                 case GameModes.ENDSCREEN:
                     Debug.Log("Mode Endscreen");
-                    if (PlayerController.GetIsFinished() == true)
-                    {
-                        m_gameMode = GameModes.RESET;
-                    }
+                    
+                      //  GameMode = GameModes.RESET;
+                    
                     break;
-                case GameModes.RESET:
-                    Debug.Log("Mode Reset");
-
-                    m_gameMode = GameModes.MENU;
-                    break;
+               //case GameModes.RESET:
+               //    Debug.Log("Mode Reset");
+               //    GameMode = GameModes.MENU;
+               //    break;
                 default:
                     break;
 
@@ -91,24 +109,38 @@ public class GameManager : NetworkBehaviour
     // Frank
     private void StartCountdown()
     {
-        float _countdown = PlayerController.m_Countdown;
-
-        if (_countdown >= 0.0F && m_canCount == true)
+        if (m_countdown >= 0.0F && m_canCount == true)
         {
-            _countdown -= Time.deltaTime;
-            m_countdownText.text = _countdown.ToString("0");
+            m_countdown -= Time.deltaTime;
+            m_countdownText.text = m_countdown.ToString("0");
+            SetIsDirty();
+
+            if (m_nextSync < m_countdown)
+            {
+                SetIsDirty();
+                m_nextSync -= 1;
+            }
         }
 
-        else if (_countdown <= 0.0F && m_canCount == true)
+        else if (m_countdown <= 0.0F && m_canCount == true)
         {
             m_countdownText.text = "0";
-            _countdown = 0.0F;
+            m_countdown = 0.0F;
             m_countdownText.enabled = false;
 
-            m_gameMode = GameModes.DRIVE;
+            GameMode = GameModes.DRIVE;
+            SetIsDirty();
         }
 
-        PlayerController.m_Countdown = _countdown;
-        SetIsDirty();
+        // PlayerController.m_Countdown = _countdown;
     }
+
+    void countdownchanged(float _c)
+    {
+        m_countdownText = GameObject.Find("Player UI/Canvas/Countdown_Text")?.GetComponent<TextMeshProUGUI>();
+        if (m_countdownText is object)
+            m_countdownText.text = _c.ToString("0") + " :-)";
+    }
+
+
 }

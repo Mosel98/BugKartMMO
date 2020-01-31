@@ -23,7 +23,7 @@ namespace Network.Messages
             SWITCH_SCENE,
             HONK_MESSAGE,
 
-            COUNTDOWN, // Frank
+         //   COUNTDOWN, // Frank
             PLAYER_IN_GAME, // Frank
             ACCELERATION_CHANGE, // Frank
             FINISH_LINE, // Frank
@@ -93,9 +93,9 @@ namespace Network.Messages
                     break;
 
                 // Frank
-                case EMessageType.COUNTDOWN:
-                    message = new CountdownMessage();
-                    break;
+              // case EMessageType.COUNTDOWN:
+              //     message = new CountdownMessage();
+              //     break;
                 // Frank
                 case EMessageType.PLAYER_IN_GAME:
                     message = new PlayerInGameMessage();

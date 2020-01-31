@@ -366,6 +366,11 @@ namespace Network
 
         public void SendMessageToClients(AMessageBase _message, QosType _channel = QosType.Reliable)
         {
+            if (isHost)
+            {
+                _message.Use();
+            }
+
             int bytesLength;
             byte[] buffer = _message.Serialize(out bytesLength);
 

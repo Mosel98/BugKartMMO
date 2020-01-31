@@ -70,19 +70,17 @@ public class PlayerController : NetworkBehaviour
     public Dictionary<KeyCode, bool> m_KeysPressed = new Dictionary<KeyCode, bool>();
 
     // dictionary to see which player are spawned in the scene
-    public Dictionary<int, bool> m_AllPlayersReady = new Dictionary<int, bool>();
+    public Dictionary<uint, bool> m_AllPlayersReady = new Dictionary<uint, bool>();
 
     // dictionary to see which player have finished the race
-    public Dictionary<int, bool> m_FinishedPlayers = new Dictionary<int, bool>();
+    public Dictionary<uint, bool> m_FinishedPlayers = new Dictionary<uint, bool>();
 
     void Awake()
     {
         m_rigidbody = GetComponent<Rigidbody>();
 
         // add player to dictionary
-        m_AllPlayersReady.Add(SlotPosition.SlotID, false);
-
-        m_FinishedPlayers.Add(SlotPosition.SlotID, false);
+        StartCoroutine(AsyncWaitForNetIdInit());
 
         // add keys for movement messages
         m_KeysPressed.Add(KeyCode.W, false);
@@ -92,18 +90,10 @@ public class PlayerController : NetworkBehaviour
         m_KeysPressed.Add(KeyCode.Space, false);
 
 
-<<<<<<< HEAD
         m_gameUIManager = GameObject.Find("GameManager").GetComponent<GameUIManager>();
         m_gameUIManager.UpdateItemImage(EItems.EMPTY);
-=======
+
         m_camera = GetComponentInChildren<Camera>();
-
-
-
-        m_gameUIManager = GameObject.Find("GameManager").GetComponent<GameUIManager>();
-        m_gameUIManager.UpdateItemImage(EItems.EMPTY);
-
->>>>>>> Develop
 
     }
 
@@ -130,7 +120,6 @@ public class PlayerController : NetworkBehaviour
             PlayerInGameMessage message = new PlayerInGameMessage();
             message.PlayerID = 0;
             message.PlayerController = this;
-            message.SlotID = SlotPosition.SlotID;
 
             // Server controls if all player are in game scene
             NetworkManager.Instance.SendMessageToServer(message);
@@ -400,10 +389,10 @@ public class PlayerController : NetworkBehaviour
                 // message CollisionCheck
                 CollisionCheckMessage message = new CollisionCheckMessage();
                 message.Player = gameObject;
-                message.ItemBox = other.gameObject; 
+                message.ItemBox = other.gameObject;
                 message.Tag = other.tag;
 
-                NetworkManager.Instance.SendMessageToServer(message);
+                NetworkManager.Instance.SendMessageToClients(message);
             }
             else
             {
@@ -414,7 +403,7 @@ public class PlayerController : NetworkBehaviour
                 message.Speed = m_speed;
                 message.Accel = m_Acceleration;
 
-                NetworkManager.Instance.SendMessageToServer(message);
+                NetworkManager.Instance.SendMessageToClients(message);
             }
         }
 
@@ -450,5 +439,22 @@ public class PlayerController : NetworkBehaviour
     public static float GetCountdown()
     {
         return m_Countdown;
+    }
+
+    private IEnumerator AsyncWaitForNetIdInit()
+    {
+        do
+        {
+            if (NetId is null)
+            {
+                yield break;
+            }
+
+            yield return null;
+        } while (!NetId.IsInitialized);
+
+        m_AllPlayersReady.Add(NetId.NetID, false);
+
+        m_FinishedPlayers.Add(NetId.NetID, false);
     }
 }

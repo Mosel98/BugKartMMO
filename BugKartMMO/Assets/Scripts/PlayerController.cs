@@ -15,7 +15,7 @@ using TMPro;
 public class PlayerController : NetworkBehaviour
 {
     public TextMeshProUGUI m_AccelerationText;
-    
+
     [SyncVar]
     public static bool m_isInGame = false;
 
@@ -40,7 +40,7 @@ public class PlayerController : NetworkBehaviour
     public static float m_Countdown = 5.0f;
 
     [SyncVar]
-    private float m_speed = 42.0f;
+    public float m_Speed = 42.0f;
 
     [SyncVar]
     public float m_Acceleration = 0.0f;
@@ -90,7 +90,7 @@ public class PlayerController : NetworkBehaviour
         m_KeysPressed.Add(KeyCode.A, false);
         m_KeysPressed.Add(KeyCode.D, false);
         m_KeysPressed.Add(KeyCode.Space, false);
-               
+
         m_gameUIManager = GameObject.Find("Player UI").GetComponent<GameUIManager>();
         m_gameUIManager.UpdateItemImage(EItems.EMPTY);
 
@@ -102,7 +102,7 @@ public class PlayerController : NetworkBehaviour
         base.Start();
 
         m_AccelerationText = GameObject.Find("Player UI/Canvas/Speed_Text").GetComponent<TextMeshProUGUI>();
-               
+
         if (!IsLocalPlayer)
         {
             m_camera.enabled = false;
@@ -161,7 +161,7 @@ public class PlayerController : NetworkBehaviour
             {
                 m_Acceleration -= 7.5f * Time.deltaTime;
                 // don't go backwards with handbreak!
-                m_Acceleration = Mathf.Clamp(m_Acceleration, 0.0f, m_speed);
+                m_Acceleration = Mathf.Clamp(m_Acceleration, 0.0f, m_Speed);
             }
             #endregion
 
@@ -176,20 +176,20 @@ public class PlayerController : NetworkBehaviour
                 {
                     // get slower without key press, but not moving backwards
                     m_Acceleration -= 1.5f * Time.deltaTime;
-                    m_Acceleration = Mathf.Clamp(m_Acceleration, 0.0f, m_speed);
+                    m_Acceleration = Mathf.Clamp(m_Acceleration, 0.0f, m_Speed);
                 }
 
                 else if (m_Acceleration < 0)
                 {
                     // get slower backwards without key press, but not moving forwards
                     m_Acceleration += 1.5f * Time.deltaTime;
-                    m_Acceleration = Mathf.Clamp(m_Acceleration, -0.5f * m_speed, 0.0f);
+                    m_Acceleration = Mathf.Clamp(m_Acceleration, -0.5f * m_Speed, 0.0f);
                 }
             }
             #endregion
 
             // clamp acceleration between (max)speed & half (max)speed for backwards movement
-            m_Acceleration = Mathf.Clamp(m_Acceleration, -0.5f * m_speed, m_speed);
+            m_Acceleration = Mathf.Clamp(m_Acceleration, -0.5f * m_Speed, m_Speed);
 
             SetIsDirty();
         }
@@ -206,8 +206,8 @@ public class PlayerController : NetworkBehaviour
         // rotation & movement
         if (GameManager.m_gameMode == GameModes.DRIVE)
         {
-        Rotate();
-        Move();
+            Rotate();
+            Move();
         }
 
         // update position of camera
@@ -220,7 +220,7 @@ public class PlayerController : NetworkBehaviour
             UseItemMessage message = new UseItemMessage();
             message.Player = gameObject;
             message.Item = (float)m_eItem;
-            message.Speed = m_speed;
+            message.Speed = m_Speed;
             message.Accel = m_Acceleration;
 
             NetworkManager.Instance.SendMessageToServer(message);
@@ -358,13 +358,6 @@ public class PlayerController : NetworkBehaviour
     }
 
     // Mario
-    public void UpdateVariable(float _speed, float _accel)
-    {
-        m_speed = _speed;
-        m_Acceleration = _accel;
-    }
-
-    // Mario
     public void UpdateItem(float _item)
     {
         m_eItem = (EItems)_item;
@@ -408,7 +401,7 @@ public class PlayerController : NetworkBehaviour
                 message.Player = gameObject;
                 message.ItemBox = other.gameObject;
                 message.Tag = other.tag;
-                message.Speed = m_speed;
+                message.Speed = m_Speed;
                 message.Accel = m_Acceleration;
 
                 NetworkManager.Instance.SendMessageToClients(message);
@@ -458,12 +451,12 @@ public class PlayerController : NetworkBehaviour
 
         if (!m_AllPlayersReady.ContainsKey(NetId.NetID))
         {
-        m_AllPlayersReady.Add(NetId.NetID, false);
+            m_AllPlayersReady.Add(NetId.NetID, false);
         }
 
         if (!m_FinishedPlayers.ContainsKey(NetId.NetID))
         {
-                    m_FinishedPlayers.Add(NetId.NetID, false);
+            m_FinishedPlayers.Add(NetId.NetID, false);
         }
     }
 }

@@ -570,7 +570,6 @@ namespace Network
             // Check in which Slot ever Player was in the Lobby and at which Start Position he is allowed to spawn
             switch (SlotPosition.SlotID)
             {
-                
                 case 0:
                     Debug.Log("Player One");
                     // Instantiate(m_Player, Hier Gewünschte Position eingeben, transform.parent.rotation);
@@ -579,6 +578,7 @@ namespace Network
                     // change Color of Player
                     rend = m_PlayerPrefab.GetComponent<Renderer>();
                     rend.material.color = Color.blue;
+
                     SpawnGameObjectAsLocalPlayer(go.gameObject, _id);
                     break;
                 case 1:

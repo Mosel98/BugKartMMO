@@ -49,8 +49,8 @@ public class PlayerController : NetworkBehaviour
     [SyncVar]
     private Vector3 m_position;
 
-    [SyncVar]
-    public Quaternion m_Rotation;
+    //[SyncVar]
+    //public Quaternion m_Rotation;
 
     private Camera m_camera; // Position?! --> testen und festlegen!
 

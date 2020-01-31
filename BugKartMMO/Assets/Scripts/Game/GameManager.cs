@@ -17,7 +17,7 @@ public class GameManager : NetworkBehaviour
     // 
 
     [SyncVar]
-    public GameModes m_gameMode;
+    public static GameModes m_gameMode;
     private GameObject[] m_allPlayers;
 
     protected virtual void Awake()

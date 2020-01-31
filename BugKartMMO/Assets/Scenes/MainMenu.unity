@@ -837,14 +837,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed78e89f10e4d0e46b937cc8488d0b93, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_StartPoint:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
   m_DisplayGUI: 0
-  m_Address: 127.0.0.1
+  m_Address: 10.5.45.237
   m_Port: 4242
   m_MaxNumberOfEventsPerFrame: 3
   m_PlayerPrefab: {fileID: 1322230635101226449, guid: a4a9b5cd17e6f49498bf4f7c87ef5fac,

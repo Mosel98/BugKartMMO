@@ -8,14 +8,11 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 
-
 // Frank
 [DisallowMultipleComponent]
 [RequireComponent(typeof(Rigidbody))]
 public class PlayerController : NetworkBehaviour
 {
-    public TextMeshProUGUI m_AccelerationText;
-
     [SyncVar]
     public static bool m_isInGame = false;
 
@@ -36,9 +33,6 @@ public class PlayerController : NetworkBehaviour
     [SerializeField]
     private Sprite m_imgShell;
 
-    //[SyncVar]
-    //public static float m_Countdown = 5.0f;
-
     [SyncVar]
     public float m_Speed = 42.0f;
 
@@ -47,9 +41,6 @@ public class PlayerController : NetworkBehaviour
 
     [SyncVar]
     private Vector3 m_position;
-
-    //[SyncVar]
-    //public Quaternion m_Rotation;
 
     private Camera m_camera;
 
@@ -80,7 +71,6 @@ public class PlayerController : NetworkBehaviour
     {
         m_rigidbody = GetComponent<Rigidbody>();
 
-
         // add player to dictionary
         StartCoroutine(AsyncWaitForNetIdInit());
 
@@ -101,13 +91,12 @@ public class PlayerController : NetworkBehaviour
         yield return new WaitWhile(() => FindObjectOfType<GameUIManager>() is null);
         m_gameUIManager = FindObjectOfType<GameUIManager>();
         m_gameUIManager.UpdateItemImage(EItems.EMPTY);
-        m_AccelerationText = GameObject.Find("Player UI/Canvas/Speed_Text").GetComponent<TextMeshProUGUI>();
     }
 
     protected override void Start()
     {
         base.Start();
-               
+
         if (!IsLocalPlayer)
         {
             m_camera.enabled = false;
@@ -127,9 +116,7 @@ public class PlayerController : NetworkBehaviour
             message.PlayerController = this;
 
             // Server controls if all player are in game scene
-          //  NetworkManager.Instance.SendMessageToServer(message);
             NetworkManager.Instance.SendMessageToClients(message);
-
         }
     }
 
@@ -137,16 +124,6 @@ public class PlayerController : NetworkBehaviour
     protected override void Update()
     {
         base.Update();
-
-        if (m_AccelerationText is object)
-            m_AccelerationText.text = m_Acceleration.ToString("0");
-
-     //   if (IsServer && GameManager.GameMode == GameModes.START_GAME)
-     //   {
-     //       StartCountdown();
-     //   }
-
-        
 
         #region --- Server ---
         if (IsServer && GameManager.GameMode == GameModes.DRIVE)
@@ -219,10 +196,6 @@ public class PlayerController : NetworkBehaviour
             Move();
         }
 
-        // update position of camera
-        //m_camera.transform.position = transform.position + m_cameraPositionShift;
-
-
         if ((Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) && m_eItem != EItems.EMPTY)
         {
             // message use item (Mario)
@@ -241,18 +214,6 @@ public class PlayerController : NetworkBehaviour
 
         #endregion
     }
-
-  // private void StartCountdown()
-  // {
-  //     // Countdown message to start synchronised countdown
-  //     CountdownMessage message = new CountdownMessage();
-  //     message.PlayerID = 0;
-  //     message.PlayerController = this;
-  //     message.Countdown = m_Countdown;
-  //     //NetworkManager.Instance.SendMessageToServer(message);
-  //     NetworkManager.Instance.SendMessageToClients(message);
-  //
-  // }
 
     private void Move()
     {
@@ -276,8 +237,6 @@ public class PlayerController : NetworkBehaviour
 
             // Server handles acceleration
             NetworkManager.Instance.SendMessageToServer(message);
-           // NetworkManager.Instance.SendMessageToClients(message);
-
         }
         #endregion
 
@@ -300,8 +259,6 @@ public class PlayerController : NetworkBehaviour
             }
 
             NetworkManager.Instance.SendMessageToServer(message);
-            //NetworkManager.Instance.SendMessageToClients(message);
-
         }
         #endregion
 
@@ -316,8 +273,6 @@ public class PlayerController : NetworkBehaviour
 
             // Server handles acceleration
             NetworkManager.Instance.SendMessageToServer(message);
-            //NetworkManager.Instance.SendMessageToClients(message);
-
         }
         #endregion
 
@@ -332,8 +287,6 @@ public class PlayerController : NetworkBehaviour
 
             // Server handles acceleration
             NetworkManager.Instance.SendMessageToServer(message);
-            //NetworkManager.Instance.SendMessageToClients(message);
-
         }
         #endregion
 
@@ -342,8 +295,6 @@ public class PlayerController : NetworkBehaviour
         direction = direction.normalized * m_Acceleration;
         direction.y = m_rigidbody.velocity.y;
         m_rigidbody.velocity = direction;
-        // m_rigidbody.MovePosition(direction + transform.position);
-
         #endregion
     }
 
@@ -387,19 +338,6 @@ public class PlayerController : NetworkBehaviour
     #region --- OnTriggerEnter ---
     private void OnTriggerEnter(Collider other)
     {
-        if (IsServer)
-        {
-            // Spielerelevante Ereignisse
-        }
-        //if (IsLocalPlayer)
-        //{
-
-        //}
-        if (IsClient)
-        {
-
-        }
-
         // Mario
         if (IsServer && other.tag == "Coin" || other.tag == "Köttel" || other.tag == "Shell" || other.tag == "Boost" || other.tag == "ItemBox")
         {
@@ -440,14 +378,6 @@ public class PlayerController : NetworkBehaviour
                     m_FinishedRace = true;
                     GameManager.GameMode = GameModes.ENDSCREEN;
                     SetIsDirty();
-
-                 //   FinishLineMessage message = new FinishLineMessage();
-                 //   message.PlayerID = 0;
-                 //   message.PlayerController = this;
-                 //   Debug.Log("Finish Line Message wurde gesendet!!!");
-                 //
-                 //   // Server handles finish race
-                 //   NetworkManager.Instance.SendMessageToClients(message);
                 }
 
                 // counts the finished player
@@ -465,9 +395,6 @@ public class PlayerController : NetworkBehaviour
                 m_finishPlace = _finishCount;
                 SetIsDirty();
             }
-
-
-            
         }
     }
     #endregion
@@ -477,12 +404,6 @@ public class PlayerController : NetworkBehaviour
     {
         return m_isInGame;
     }
-
-
-  //  public static float GetCountdown()
-  //  {
-  //      return m_Countdown;
-  //  }
 
     private IEnumerator AsyncWaitForNetIdInit()
     {

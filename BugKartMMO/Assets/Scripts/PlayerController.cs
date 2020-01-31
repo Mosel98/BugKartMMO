@@ -15,7 +15,7 @@ public class PlayerController : NetworkBehaviour
 {
     [SyncVar]
     public static bool m_isInGame = false;
-    [SerializeField]
+
     private Image m_itemImage;
 
     [SerializeField]
@@ -95,6 +95,7 @@ public class PlayerController : NetworkBehaviour
 
         m_camera = GetComponent<Camera>();
 
+        m_itemImage = GameObject.Find("Player UI/Canvas/Item_Image").GetComponent<Image>();
         m_itemImage.sprite = m_imgEmpty;
 
         // m_cameraPositionShift.Set(0.0f, 15.0f, -25.0f); // Verschiebung der Kamera

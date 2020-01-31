@@ -453,8 +453,14 @@ public class PlayerController : NetworkBehaviour
             yield return null;
         } while (!NetId.IsInitialized);
 
+        if (!m_AllPlayersReady.ContainsKey(NetId.NetID))
+        {
         m_AllPlayersReady.Add(NetId.NetID, false);
+        }
 
-        m_FinishedPlayers.Add(NetId.NetID, false);
+        if (!m_FinishedPlayers.ContainsKey(NetId.NetID))
+        {
+                    m_FinishedPlayers.Add(NetId.NetID, false);
+        }
     }
 }

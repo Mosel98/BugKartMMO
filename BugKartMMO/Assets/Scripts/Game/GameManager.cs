@@ -47,7 +47,7 @@ public class GameManager : NetworkBehaviour
                     if (PlayerController.GetCanStart() == true)
                     {
                         StartCountdown();
-                        //m_gameMode = GameModes.DRIVE;
+                        //m_gameMode = GameModes.DRIVE; --> steht unten
                     }
                     break;
                 case GameModes.DRIVE:

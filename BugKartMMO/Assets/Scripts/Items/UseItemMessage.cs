@@ -8,6 +8,8 @@ namespace Network.Messages
     {
         public GameObject Player { get; set; }
         public float Item { get; set; }
+        public float Speed { get; set; }
+        public float Accel { get; set; }
 
         public override byte[] Serialize(out int _bytes)
         {
@@ -18,6 +20,8 @@ namespace Network.Messages
                     nw.Write((short)EMessageType.USE_ITEM);
                     nw.Write(Player);
                     nw.Write(Item);
+                    nw.Write(Speed);
+                    nw.Write(Accel);
 
                     _bytes = (int)ms.Position;
                     return ms.ToArray();
@@ -35,6 +39,8 @@ namespace Network.Messages
                     nr.ReadInt16();
                     Player = nr.ReadGameObject();
                     Item = nr.ReadSingle();
+                    Speed = nr.ReadSingle();
+                    Accel = nr.ReadSingle();
                 }
             }
         }
@@ -47,7 +53,7 @@ namespace Network.Messages
                 NetworkItemHandeling NIM = Player.GetComponent<NetworkItemHandeling>();
                 if (NIM is object)
                 {
-                    NIM.UseItem(Player, Item);
+                    NIM.UseItem(Player, Item, Speed, Accel);
                 }
                 else
                 {

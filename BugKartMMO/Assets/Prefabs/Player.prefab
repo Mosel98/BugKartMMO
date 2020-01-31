@@ -673,8 +673,6 @@ MonoBehaviour:
   m_SyncInterval: 1
   m_greenShell: {fileID: 2812973722266641096, guid: f8c060bf5d80de04695568e288538fd3,
     type: 3}
-  m_redShell: {fileID: 8152506560813858379, guid: d02e0dbe9553bdc4db46f9042a0634cd,
-    type: 3}
   "m_k\xF6ttel": {fileID: 207971309862956056, guid: 5dc072050f70c43498ff4a4889415a0a,
     type: 3}
   m_boostTime: 1

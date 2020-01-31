@@ -48,7 +48,7 @@ namespace Network.IO
 
             if (identity is null)
             {
-                Debug.LogException(new MissingComponentException("NetworkIdentity ist nicht " +
+                Debug.Log(new MissingComponentException("NetworkIdentity ist nicht " +
                    "auf dem Objekt vorhanden!"), _gameObject);
                 return;
             }

@@ -10,12 +10,11 @@ public class NetworkItemHandeling : MonoBehaviour
     [SerializeField]
     private GameObject m_greenShell;
     [SerializeField]
-    private GameObject m_redShell;
-    [SerializeField]
     private GameObject m_köttel;
 
     private GameObject m_player;
     private GameObject m_itemBox;
+    private GameObject m_item;
 
     private float m_speed { get; set; }
     private float m_accel { get; set; }
@@ -34,9 +33,11 @@ public class NetworkItemHandeling : MonoBehaviour
     private bool m_respItemBox = false;
 
     #region ----- UseItem -----
-    public void UseItem(GameObject _go, float _item)
+    public void UseItem(GameObject _go, float _item, float _speed, float _accel)
     {
         m_player = _go;
+        m_speed = _speed;
+        m_accel = _accel;
 
         switch ((EItems)_item)
         {
@@ -57,13 +58,16 @@ public class NetworkItemHandeling : MonoBehaviour
 
     private void SpawnItem(GameObject _item, float _spawnDist)
     {
-        Vector3 spawnPos = m_player.transform.position + m_player.transform.forward * _spawnDist;
+        Vector3 tmpVec = m_player.transform.position + m_player.transform.forward * _spawnDist;
+        float y = 0.5f;
+
+        Vector3 spawnPos = new Vector3(tmpVec.x, y, tmpVec.z);
 
         GameObject tmp = Instantiate(_item, spawnPos, m_player.transform.rotation);
 
-        if (tmp == m_greenShell)
+        if (tmp.tag == m_greenShell.tag)
         {
-            tmp.GetComponent<Rigidbody>().AddForce(tmp.transform.forward * 100.0f);
+            tmp.GetComponent<Rigidbody>().AddForce(tmp.transform.forward * 100.0f, ForceMode.Impulse);
         }
     }
     #endregion
@@ -71,7 +75,7 @@ public class NetworkItemHandeling : MonoBehaviour
     #region ----- ItemBox -----
     public void ItemBoxCheck(GameObject _go, GameObject _ib)
     {
-        int item = Random.Range(0, 3);
+        int item = Random.Range(0, 4);
 
         UpdateVariableMessage message = new UpdateVariableMessage();
         message.Player = _go;
@@ -95,10 +99,11 @@ public class NetworkItemHandeling : MonoBehaviour
     #endregion
 
     #region ----- ItemCollision -----
-    public void CollisionCheck(GameObject _go, string _tag, float _speed, float _accel)
+    public void CollisionCheck(GameObject _go, GameObject _it,string _tag, float _speed, float _accel)
     {
         string tag = _tag;
         m_player = _go;
+        m_item = _it;
         m_speed = _speed;
         m_accel = _accel;
 
@@ -110,33 +115,20 @@ public class NetworkItemHandeling : MonoBehaviour
             case "Shell":
                 StopPlayer();
                 break;
+            case "Köttel":
+                StopPlayer();
+                break;
             case "Boost":
                 BoostSpeed();
                 break;
         }
     }
 
-    private void ConstantSpeed()
-    {
-        m_speed += 0.1f;
-
-        UpdateVariable();
-    }
-
-    private void BoostSpeed()
-    {
-        m_tmpAccel = m_accel;
-        m_accel += 1.5f;
-
-        m_boostSpeed = true;
-
-        UpdateVariable();
-    }
-
     private void StopPlayer()
     {
         m_accel = 0.0f;
 
+        Destroy(m_item);
         UpdateVariable();
     }
 
@@ -171,6 +163,23 @@ public class NetworkItemHandeling : MonoBehaviour
         }
     }
     #endregion
+
+    private void ConstantSpeed()
+    {
+        m_speed += 0.1f;
+
+        UpdateVariable();
+    }
+
+    private void BoostSpeed()
+    {
+        m_tmpAccel = m_accel;
+        m_accel += 1.5f;
+
+        m_boostSpeed = true;
+
+        UpdateVariable();
+    }
 
     private void UpdateVariable()
     {

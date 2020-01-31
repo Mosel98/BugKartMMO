@@ -39,8 +39,6 @@ public class PlayerController : NetworkBehaviour
     [SyncVar]
     public static float m_Countdown = 5.0f;
 
-    private static bool m_canStart = false;
-
     [SyncVar]
     private float m_speed = 42.0f;
 
@@ -82,7 +80,6 @@ public class PlayerController : NetworkBehaviour
     {
         m_rigidbody = GetComponent<Rigidbody>();
 
-        m_AccelerationText = GameObject.Find("Player UI/Canvas/Speed_Text").GetComponent<TextMeshProUGUI>();
 
         // add player to dictionary
         StartCoroutine(AsyncWaitForNetIdInit());
@@ -94,7 +91,7 @@ public class PlayerController : NetworkBehaviour
         m_KeysPressed.Add(KeyCode.D, false);
         m_KeysPressed.Add(KeyCode.Space, false);
                
-        m_gameUIManager = GameObject.Find("GameManager").GetComponent<GameUIManager>();
+        m_gameUIManager = GameObject.Find("Player UI").GetComponent<GameUIManager>();
         m_gameUIManager.UpdateItemImage(EItems.EMPTY);
 
         m_camera = GetComponentInChildren<Camera>();
@@ -103,12 +100,12 @@ public class PlayerController : NetworkBehaviour
     protected override void Start()
     {
         base.Start();
+
+        m_AccelerationText = GameObject.Find("Player UI/Canvas/Speed_Text").GetComponent<TextMeshProUGUI>();
                
         if (!IsLocalPlayer)
         {
             m_camera.enabled = false;
-            // m_cameraPositionShift.Set(0.0f, 15.0f, -25.0f); // Verschiebung der Kamera
-            // m_camera.transform.position = transform.position + m_cameraPositionShift;
         }
 
         #region --- != localPlayer ---
@@ -431,12 +428,6 @@ public class PlayerController : NetworkBehaviour
     public static bool IsInGame()
     {
         return m_isInGame;
-    }
-
-    // bool turns true after countdown is zero
-    public static bool GetCanStart()
-    {
-        return m_canStart;
     }
 
     public static bool GetIsFinished()

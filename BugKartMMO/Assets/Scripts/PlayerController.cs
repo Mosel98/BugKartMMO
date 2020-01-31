@@ -142,7 +142,7 @@ public class PlayerController : NetworkBehaviour
     {
         base.Update();
 
-        if (IsServer)// && GameManager.m_gameMode == GameModes.START_GAME)
+        if (IsServer && GameManager.m_gameMode == GameModes.START_GAME)
         {
             StartCountdown();
         }
@@ -393,7 +393,7 @@ public class PlayerController : NetworkBehaviour
         }
 
         // Mario
-        if (IsLocalPlayer && other.tag == "Coin" || other.tag == "Shell" || other.tag == "Boost" || other.tag == "ItemBox")
+        if (IsServer && other.tag == "Coin" || other.tag == "Shell" || other.tag == "Boost" || other.tag == "ItemBox")
         {
             if (other.tag == "ItemBox")
             {
@@ -418,14 +418,14 @@ public class PlayerController : NetworkBehaviour
             }
         }
 
-        if (IsLocalPlayer && other.tag == "Finish")
+        if (IsServer && other.tag == "Finish")
         {
             FinishLineMessage message = new FinishLineMessage();
             message.PlayerID = 0;
             message.PlayerController = this;
 
             // Server handles finish race
-            NetworkManager.Instance.SendMessageToServer(message);
+            NetworkManager.Instance.SendMessageToClients(message);
         }
     }
     #endregion

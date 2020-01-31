@@ -67,6 +67,9 @@ public class PlayerController : NetworkBehaviour
     // dictionary to see which player have finished the race
     public Dictionary<uint, bool> m_FinishedPlayers = new Dictionary<uint, bool>();
 
+    [SyncVar]
+    public Color m_color;
+
     void Awake()
     {
         m_rigidbody = GetComponent<Rigidbody>();
@@ -100,6 +103,12 @@ public class PlayerController : NetworkBehaviour
         if (!IsLocalPlayer)
         {
             m_camera.enabled = false;
+        }
+
+        Renderer[] rend = GetComponentsInChildren<Renderer>();
+        foreach (Renderer r in rend)
+        {
+            r.material.color = m_color;
         }
 
         #region --- != localPlayer ---

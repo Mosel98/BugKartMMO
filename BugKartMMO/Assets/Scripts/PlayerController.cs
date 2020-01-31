@@ -122,7 +122,9 @@ public class PlayerController : NetworkBehaviour
             message.PlayerController = this;
 
             // Server controls if all player are in game scene
-            NetworkManager.Instance.SendMessageToServer(message);
+          //  NetworkManager.Instance.SendMessageToServer(message);
+            NetworkManager.Instance.SendMessageToClients(message);
+
         }
     }
 
@@ -140,7 +142,7 @@ public class PlayerController : NetworkBehaviour
 
 
         #region --- Server ---
-        if (IsServer)
+        if (IsServer && GameManager.m_gameMode == GameModes.DRIVE)
         {
             #region --- W & S ---
             // keys pressed down (true)
@@ -240,7 +242,9 @@ public class PlayerController : NetworkBehaviour
         message.PlayerID = 0;
         message.PlayerController = this;
         message.Countdown = m_Countdown;
-        NetworkManager.Instance.SendMessageToServer(message);
+        //NetworkManager.Instance.SendMessageToServer(message);
+        NetworkManager.Instance.SendMessageToClients(message);
+
     }
 
     private void Move()
@@ -264,7 +268,9 @@ public class PlayerController : NetworkBehaviour
             }
 
             // Server handles acceleration
-            NetworkManager.Instance.SendMessageToServer(message);
+           // NetworkManager.Instance.SendMessageToServer(message);
+            NetworkManager.Instance.SendMessageToClients(message);
+
         }
         #endregion
 
@@ -286,7 +292,9 @@ public class PlayerController : NetworkBehaviour
                 message.PressedKey = KeyCode.S;
             }
 
-            NetworkManager.Instance.SendMessageToServer(message);
+            //NetworkManager.Instance.SendMessageToServer(message);
+            NetworkManager.Instance.SendMessageToClients(message);
+
         }
         #endregion
 
@@ -300,7 +308,9 @@ public class PlayerController : NetworkBehaviour
             message.PlayerController = this;
 
             // Server handles acceleration
-            NetworkManager.Instance.SendMessageToServer(message);
+            //NetworkManager.Instance.SendMessageToServer(message);
+            NetworkManager.Instance.SendMessageToClients(message);
+
         }
         #endregion
 
@@ -314,7 +324,9 @@ public class PlayerController : NetworkBehaviour
             message.PlayerController = this;
 
             // Server handles acceleration
-            NetworkManager.Instance.SendMessageToServer(message);
+            //NetworkManager.Instance.SendMessageToServer(message);
+            NetworkManager.Instance.SendMessageToClients(message);
+
         }
         #endregion
 

@@ -353,7 +353,15 @@ namespace Network
                                     tmpValue = nr.ReadInt16();
                                     break;
                                 case "Int32":
-                                    tmpValue = nr.ReadInt32();
+                                    try
+                                    {
+
+                                        tmpValue = nr.ReadInt32();
+                                    }
+                                    catch (System.IO.EndOfStreamException)
+                                    {
+                                        Debug.LogError($"{info.Name}");
+                                    }
                                     break;
                                 case "Int64":
                                     tmpValue = nr.ReadInt64();
@@ -414,7 +422,7 @@ namespace Network
                         }
                         info.SetValue(this, tmpValue);
                         SyncVar syncVar = info.GetCustomAttribute<SyncVar>();
-                        if (syncVar is object  && syncVar.Hook is object)
+                        if (syncVar is object && syncVar.Hook is object)
                         {
                             SendMessage(syncVar.Hook, tmpValue, SendMessageOptions.RequireReceiver);
                         }

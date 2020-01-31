@@ -95,8 +95,8 @@ public class PlayerController : NetworkBehaviour
 
         m_camera = GetComponent<Camera>();
 
-        m_gameUIManager = GameObject.Find("GameManager").GetComponent<GameUIManager>();
-        m_gameUIManager.UpdateItemImage(EItems.EMPTY);
+        //m_gameUIManager = GameObject.Find("GameManager").GetComponent<GameUIManager>();
+        //m_gameUIManager.UpdateItemImage(EItems.EMPTY);
 
         // m_cameraPositionShift.Set(0.0f, 15.0f, -25.0f); // Verschiebung der Kamera
         // m_camera.transform.position = transform.position + m_cameraPositionShift;
@@ -308,10 +308,9 @@ public class PlayerController : NetworkBehaviour
         #region --- movement ---
         Vector3 direction = transform.forward;
         direction = direction.normalized * m_Acceleration;
-        direction.y = m_rigidbody.velocity.y;
-        m_rigidbody.velocity = direction;
+        //direction.y = m_rigidbody.velocity.y;
+        m_rigidbody.MovePosition(transform.position + direction);
 
-        transform.position += direction;
         #endregion
     }
 

@@ -31,7 +31,7 @@ namespace Network
             }
         }
 
-        
+
         [SerializeField]
         private Transform[] m_StartPoint = new Transform[5];
 
@@ -496,6 +496,14 @@ namespace Network
                         continue;
                     SpawnGameObject(identity.gameObject);
                 }
+
+                if (_scene.name == "Game")
+                {
+                    foreach (int _id in m_allClients)
+                    {
+                        SpawnPlayerPrefab(_id);
+                    }
+                }
             }
         }
 
@@ -560,7 +568,11 @@ namespace Network
         {
             m_PlayerPrefab.tag = "Player";
             //NetworkIdentity go = Instantiate(m_PlayerPrefab, Vector3.zero, Quaternion.identity);
-            StartPosition(_id);
+            //NetworkIdentity go = Instantiate(m_PlayerPrefab, m_StartPoint[0].position, Quaternion.identity);
+            NetworkIdentity go = Instantiate(m_PlayerPrefab, new Vector3(275.0f, 1.0f, 555.0f), Quaternion.identity);
+            SpawnGameObjectAsLocalPlayer(go.gameObject, _id);
+
+            //StartPosition(_id);
         }
 
         void StartPosition(int _id)
@@ -570,6 +582,7 @@ namespace Network
             // Check in which Slot ever Player was in the Lobby and at which Start Position he is allowed to spawn
             switch (SlotPosition.SlotID)
             {
+
                 case 0:
                     Debug.Log("Player One");
                     // Instantiate(m_Player, Hier Gewünschte Position eingeben, transform.parent.rotation);
@@ -589,7 +602,7 @@ namespace Network
                     // change Color of Player
                     rend = m_PlayerPrefab.GetComponent<Renderer>();
                     rend.material.color = Color.red;
-                    
+
                     SpawnGameObjectAsLocalPlayer(go.gameObject, _id);
                     break;
                 case 2:
@@ -629,7 +642,7 @@ namespace Network
                     break;
             }
 
-            
+
         }
 
         protected virtual void AddToAllClients(int _id)

@@ -1,0 +1,79 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &2767537024055597148
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2767537024055597149}
+  - component: {fileID: 2767537024055597088}
+  - component: {fileID: 2767537024055597151}
+  - component: {fileID: 2767537024055597150}
+  m_Layer: 0
+  m_Name: GameManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2767537024055597149
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2767537024055597148}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 541, y: 435, z: 444}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2767537024055597088
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2767537024055597148}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 41e9e4ee0d530e947b85ef4def35a493, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_prefabID: 0
+--- !u!114 &2767537024055597151
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2767537024055597148}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c394436b779738244a686f5e44698d75, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_gameMode: 0
+--- !u!114 &2767537024055597150
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2767537024055597148}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 68ed8ab03039d4f46bd7b376d72c758b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_itemImage: {fileID: 0}
+  m_imgEmpty: {fileID: 21300000, guid: bee530088e8991d41ad21a10a39b2a17, type: 3}
+  m_imgCoin: {fileID: 21300000, guid: f459c14945ef97e44b66ea7eab2a767f, type: 3}
+  m_imgMush: {fileID: 21300000, guid: 33ff89e01f0e358409a54ffb68a345cd, type: 3}
+  "m_imgK\xF6ttel": {fileID: 0}
+  m_imgShell: {fileID: 0}

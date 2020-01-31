@@ -20,7 +20,10 @@ public class GameManager : NetworkBehaviour
     public GameModes m_gameMode;
     private GameObject[] m_allPlayers;
 
-
+    protected virtual void Awake()
+    {
+        DontDestroyOnLoad(this.gameObject);
+    }
 
     protected override void Update()
     {

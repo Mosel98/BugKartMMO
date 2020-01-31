@@ -64,7 +64,7 @@ namespace Network.Messages
                     }
                     else
                     {
-                        NIM.CollisionCheck(Player, Tag, Speed, Accel);
+                        NIM.CollisionCheck(Player, ItemBox, Tag, Speed, Accel);
                     }
                 }
                 else

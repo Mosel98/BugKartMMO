@@ -223,6 +223,8 @@ public class PlayerController : NetworkBehaviour
             UseItemMessage message = new UseItemMessage();
             message.Player = gameObject;
             message.Item = (float)m_eItem;
+            message.Speed = m_speed;
+            message.Accel = m_Acceleration;
 
             NetworkManager.Instance.SendMessageToServer(message);
 
@@ -390,7 +392,7 @@ public class PlayerController : NetworkBehaviour
         }
 
         // Mario
-        if (IsServer && other.tag == "Coin" || other.tag == "Shell" || other.tag == "Boost" || other.tag == "ItemBox")
+        if (IsServer && other.tag == "Coin" || other.tag == "Köttel" || other.tag == "Shell" || other.tag == "Boost" || other.tag == "ItemBox")
         {
             if (other.tag == "ItemBox")
             {
@@ -407,6 +409,7 @@ public class PlayerController : NetworkBehaviour
                 // message CollisionCheck
                 CollisionCheckMessage message = new CollisionCheckMessage();
                 message.Player = gameObject;
+                message.ItemBox = other.gameObject;
                 message.Tag = other.tag;
                 message.Speed = m_speed;
                 message.Accel = m_Acceleration;

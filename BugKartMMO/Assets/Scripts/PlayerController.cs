@@ -34,7 +34,7 @@ public class PlayerController : NetworkBehaviour
     private Sprite m_imgShell;
 
     [SyncVar]
-    public float m_Countdown = 5.0f;
+    public static float m_Countdown = 5.0f;
 
     private static bool m_canStart = false;
 
@@ -137,7 +137,7 @@ public class PlayerController : NetworkBehaviour
     {
         base.Update();
 
-        if (IsServer && GameManager.m_gameMode == GameModes.START_GAME)
+        if (IsServer)// && GameManager.m_gameMode == GameModes.START_GAME)
         {
             StartCountdown();
         }
@@ -430,4 +430,8 @@ public class PlayerController : NetworkBehaviour
         return m_FinishedRace;
     }
 
+    public static float GetCountdown()
+    {
+        return m_Countdown;
+    }
 }

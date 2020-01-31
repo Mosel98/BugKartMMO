@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Network;
+using System;
+using UnityEngine.UI;
+using TMPro;
 
 public class GameManager : NetworkBehaviour
 {
@@ -19,6 +22,9 @@ public class GameManager : NetworkBehaviour
     [SyncVar]
     public static GameModes m_gameMode;
     private GameObject[] m_allPlayers;
+
+    public TextMeshProUGUI m_countdownText;
+    private bool m_canCount = true;
 
     protected virtual void Awake()
     {
@@ -40,7 +46,8 @@ public class GameManager : NetworkBehaviour
                 case GameModes.START_GAME:
                     if (PlayerController.GetCanStart() == true)
                     {
-                        m_gameMode = GameModes.DRIVE;
+                        StartCountdown();
+                        //m_gameMode = GameModes.DRIVE;
                     }
                     break;
                 case GameModes.DRIVE:
@@ -72,5 +79,30 @@ public class GameManager : NetworkBehaviour
             }
             SetIsDirty();
         }
+    }
+
+
+    // Frank
+    private void StartCountdown()
+    {
+        float _countdown = PlayerController.m_Countdown;
+
+        if (_countdown >= 0.0F && m_canCount == true)
+        {
+            _countdown -= Time.deltaTime;
+            m_countdownText.text = _countdown.ToString("0");
+        }
+
+        else if (_countdown <= 0.0F && m_canCount == true)
+        {
+            m_countdownText.text = "0";
+            _countdown = 0.0F;
+            m_countdownText.enabled = false;
+
+            m_gameMode = GameModes.DRIVE;
+        }
+
+        PlayerController.m_Countdown = _countdown;
+        SetIsDirty();
     }
 }

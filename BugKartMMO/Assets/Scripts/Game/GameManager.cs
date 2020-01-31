@@ -8,17 +8,6 @@ using TMPro;
 
 public class GameManager : NetworkBehaviour
 {
-    // Bool = is finished
-    // --> m_FinishedRace (PlayerController)
-    // for each player, check if finished 
-    // if isfinished == true --> game stop // scene change to highscore or Win List 
-    // --> Load Scene: "Endscreen"
-    // Player send back to lobby
-    // --> Load Scene: "Lobby"
-
-    // if Player disconnects == game stop --> back to lobby
-    // 
-
     public static GameModes GameMode
     {
         get
@@ -46,16 +35,10 @@ public class GameManager : NetworkBehaviour
     public TextMeshProUGUI m_countdownText;
     private bool m_canCount = true;
 
+    public TextMeshProUGUI m_FinishText;
+
     [SyncVar("countdownchanged")]
     private float m_countdown = 5.0f;
-
-    private float m_nextSync = 5;
-
-
-    protected virtual void Awake()
-    {
-        //DontDestroyOnLoad(this.gameObject);
-    }
 
     protected override void Update()
     {
@@ -79,30 +62,22 @@ public class GameManager : NetworkBehaviour
                 case GameModes.DRIVE:
                     Debug.Log("Mode Drive");
                     break;
-                case GameModes.CLIENT_DISCONNECT:
-                    Debug.Log("Mode Client Disconnect");
-                    // Button Lobby hit
-                    //if ()
-                    //{
-                    //    m_gameMode = GameModes.CLIENT_DISCONNECT;
-                    //}
-                    break;
                 case GameModes.ENDSCREEN:
                     Debug.Log("Mode Endscreen");
-                    
-                      //  GameMode = GameModes.RESET;
-                    
+                    StartEndScreen();
                     break;
-               //case GameModes.RESET:
-               //    Debug.Log("Mode Reset");
-               //    GameMode = GameModes.MENU;
-               //    break;
                 default:
                     break;
 
             }
             SetIsDirty();
         }
+    }
+
+    private void StartEndScreen()
+    {
+        m_FinishText = GameObject.Find("Player UI/Canvas/Win_Text")?.GetComponent<TextMeshProUGUI>();
+        m_FinishText.enabled = true;
     }
 
 
@@ -114,12 +89,6 @@ public class GameManager : NetworkBehaviour
             m_countdown -= Time.deltaTime;
             m_countdownText.text = m_countdown.ToString("0");
             SetIsDirty();
-
-            if (m_nextSync < m_countdown)
-            {
-                SetIsDirty();
-                m_nextSync -= 1;
-            }
         }
 
         else if (m_countdown <= 0.0F && m_canCount == true)
@@ -131,15 +100,13 @@ public class GameManager : NetworkBehaviour
             GameMode = GameModes.DRIVE;
             SetIsDirty();
         }
-
-        // PlayerController.m_Countdown = _countdown;
     }
 
     void countdownchanged(float _c)
     {
         m_countdownText = GameObject.Find("Player UI/Canvas/Countdown_Text")?.GetComponent<TextMeshProUGUI>();
         if (m_countdownText is object)
-            m_countdownText.text = _c.ToString("0") + " :-)";
+            m_countdownText.text = _c.ToString("0");
     }
 
 

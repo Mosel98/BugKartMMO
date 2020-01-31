@@ -23,10 +23,10 @@ namespace Network.Messages
             SWITCH_SCENE,
             HONK_MESSAGE,
 
-         //   COUNTDOWN, // Frank
+            COUNTDOWN, // Frank
             PLAYER_IN_GAME, // Frank
             ACCELERATION_CHANGE, // Frank
-            FINISH_LINE, // Frank
+            ENDSCREEN, // Frank
             COLLISION_CHECK, // Mario
             UPDATE_VARIABLE, // Mario
             USE_ITEM, // Mario
@@ -93,10 +93,6 @@ namespace Network.Messages
                     break;
 
                 // Frank
-              // case EMessageType.COUNTDOWN:
-              //     message = new CountdownMessage();
-              //     break;
-                // Frank
                 case EMessageType.PLAYER_IN_GAME:
                     message = new PlayerInGameMessage();
                     break;
@@ -105,8 +101,12 @@ namespace Network.Messages
                     message = new AccelerationMessage();
                     break;
                 // Frank
-                case EMessageType.FINISH_LINE:
-                    message = new FinishLineMessage();
+                case EMessageType.ENDSCREEN:
+                    message = new EndscreenMessage();
+                    break;
+                // Frank
+                case EMessageType.COUNTDOWN:
+                    message = new CountdownMessage();
                     break;
 
                 // Mario

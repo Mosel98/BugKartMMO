@@ -7,7 +7,7 @@ using System.IO;
 // Frank
 namespace Network.Messages
 {
-    public class CountdownMessage : AMessageBase
+    public class EndscreenMessage : AMessageBase
     {
         public int PlayerID { get; set; }
         public PlayerController PlayerController { get; set; }
@@ -19,7 +19,7 @@ namespace Network.Messages
             {
                 using (NetworkWriter nw = new NetworkWriter(ms))
                 {
-                    nw.Write((short)EMessageType.COUNTDOWN);
+                    nw.Write((short)EMessageType.ENDSCREEN);
 
 
                     _bytes = (int)ms.Position;
@@ -45,9 +45,10 @@ namespace Network.Messages
         public override void Use()
         {
 
-            GameObject.Find("GameManager").GetComponent<GameManager>().SetCountDownFalse();
+            GameObject.Find("GameManager").GetComponent<GameManager>().ShowEndscreen();
 
             GameObject.Find("GameManager").GetComponent<GameManager>().SetIsDirty();
+
         }
     }
 }

@@ -6,6 +6,7 @@ using System;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.SceneManagement;
+using Network.Messages;
 
 public class GameManager : NetworkBehaviour
 {
@@ -61,7 +62,7 @@ public class GameManager : NetworkBehaviour
 
             if (m_timer >= m_EndScreenTime)
             {
-                SceneManager.LoadScene("MainMenu");
+                Application.Quit();
             }
         }
 
@@ -97,8 +98,17 @@ public class GameManager : NetworkBehaviour
 
     private void StartEndScreen()
     {
+        ShowEndscreen();
+
+        EndscreenMessage message = new EndscreenMessage();
+        NetworkManager.Instance.SendMessageToClients(message);
+        SetIsDirty();
+    }
+
+    public void ShowEndscreen()
+    {
         m_FinishText.SetActive(true);
-        m_FinishText.GetComponent<TextMeshProUGUI>().text = $"{m_WinPlayer} hat Gewonnen";
+        m_FinishText.GetComponent<TextMeshProUGUI>().text = $"{m_WinPlayer} hat gewonnen! Vielen Dank fürs Spielen :) Das Spiel zerstört sich jetzt selber :D";
 
         m_EndTime = true;
     }
@@ -118,11 +128,19 @@ public class GameManager : NetworkBehaviour
         {
             m_countdownText.text = "";
             m_countdown = 0.0F;
-            m_countdownText.enabled = false;
 
-            GameMode = GameModes.DRIVE;
+            SetCountDownFalse();
+            // message
+            CountdownMessage message = new CountdownMessage();
+            NetworkManager.Instance.SendMessageToClients(message);
             SetIsDirty();
         }
+    }
+
+    public void SetCountDownFalse()
+    {
+        m_countdownText.enabled = false;
+
     }
 
     void countdownchanged(float _c)

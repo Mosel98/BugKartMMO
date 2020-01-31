@@ -385,7 +385,7 @@ public class PlayerController : NetworkBehaviour
                 {
                     Debug.Log("Yeeeeey Rennen beendet!");
                     m_FinishedRace = true;
-                    GameManager.m_WinPlayer = gameObject.name;
+                    GameManager.m_WinPlayer = gameObject.name + NetId.NetID;
                     GameManager.GameMode = GameModes.ENDSCREEN;
                     SetIsDirty();
                 }

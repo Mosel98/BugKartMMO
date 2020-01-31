@@ -95,8 +95,8 @@ public class PlayerController : NetworkBehaviour
 
         m_camera = GetComponent<Camera>();
 
-        //m_gameUIManager = GameObject.Find("GameManager").GetComponent<GameUIManager>();
-        //m_gameUIManager.UpdateItemImage(EItems.EMPTY);
+        m_gameUIManager = GameObject.Find("GameManager").GetComponent<GameUIManager>();
+        m_gameUIManager.UpdateItemImage(EItems.EMPTY);
 
         // m_cameraPositionShift.Set(0.0f, 15.0f, -25.0f); // Verschiebung der Kamera
         // m_camera.transform.position = transform.position + m_cameraPositionShift;
@@ -211,7 +211,10 @@ public class PlayerController : NetworkBehaviour
         if ((Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.RightShift)) && m_eItem != EItems.EMPTY)
         {
             // message use item (Mario)
-            UseItemMessage message = new UseItemMessage(gameObject, (float)m_eItem);
+            UseItemMessage message = new UseItemMessage();
+            message.Player = gameObject;
+            message.Item = (float)m_eItem;
+
             NetworkManager.Instance.SendMessageToServer(message);
 
             m_eItem = EItems.EMPTY;
@@ -380,13 +383,22 @@ public class PlayerController : NetworkBehaviour
             if (other.tag == "ItemBox")
             {
                 // message CollisionCheck
-                CollisionCheckMessage message = new CollisionCheckMessage(gameObject, other.gameObject, other.tag);
+                CollisionCheckMessage message = new CollisionCheckMessage();
+                message.Player = gameObject;
+                message.ItemBox = other.gameObject; 
+                message.Tag = other.tag;
+
                 NetworkManager.Instance.SendMessageToServer(message);
             }
             else
             {
                 // message CollisionCheck
-                CollisionCheckMessage message = new CollisionCheckMessage(gameObject, other.tag, m_speed, m_Acceleration);
+                CollisionCheckMessage message = new CollisionCheckMessage();
+                message.Player = gameObject;
+                message.Tag = other.tag;
+                message.Speed = m_speed;
+                message.Accel = m_Acceleration;
+
                 NetworkManager.Instance.SendMessageToServer(message);
             }
         }

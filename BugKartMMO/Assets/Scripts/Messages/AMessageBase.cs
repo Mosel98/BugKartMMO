@@ -28,6 +28,7 @@ namespace Network.Messages
             FINISH_LINE, // Frank
             COLLISION_CHECK, // Mario
             UPDATE_VARIABLE, // Mario
+            USE_ITEM, // Mario
 
             LOBBY_MESSAGES = 10_000,
             LOBBY_REQUEST_JOIN,
@@ -102,18 +103,7 @@ namespace Network.Messages
                 case EMessageType.FINISH_LINE:
                     message = new FinishLineMessage();
                     break;
-                // Frank
-                //  case EMessageType.CONTROL_CHANGE:
-                //      message = new ControlMessage();
-                //      break;
-                //      // Frank
-                // case EMessageType.SPEED_ACC_NULL:
-                //     message = new HandbreakMessage();
-                //     break;
-                // Frank
-                //  case EMessageType.ROTATION_CHANGE:
-                //      message = new RotationMessage();
-                //      break;
+
                 // Mario
                 case EMessageType.COLLISION_CHECK:
                     message = new CollisionCheckMessage();
@@ -122,7 +112,10 @@ namespace Network.Messages
                 case EMessageType.UPDATE_VARIABLE:
                     message = new UpdateVariableMessage();
                     break;
-
+                // Mario
+                case EMessageType.USE_ITEM:
+                    message = new UseItemMessage();
+                    break;
 
                 case EMessageType.LOBBY_ACCEPT_JOIN:
                     message = new LobbyAcceptJoinMessage();

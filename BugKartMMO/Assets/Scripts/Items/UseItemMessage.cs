@@ -1,6 +1,4 @@
 ﻿using Network.IO;
-using System.Collections;
-using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
@@ -8,18 +6,23 @@ namespace Network.Messages
 {
     public class UseItemMessage : AMessageBase
     {
-        public GameObject GameObject { get; set; }
+        public GameObject Player { get; set; }
         public float Item { get; set; }
 
-        public UseItemMessage()
+        public override byte[] Serialize(out int _bytes)
         {
+            using (MemoryStream ms = new MemoryStream())
+            {
+                using (NetworkWriter nw = new NetworkWriter(ms))
+                {
+                    nw.Write((short)EMessageType.USE_ITEM);
+                    nw.Write(Player);
+                    nw.Write(Item);
 
-        }
-
-        public UseItemMessage(GameObject _go, float _item)
-        {
-            GameObject = _go;
-            Item = _item;
+                    _bytes = (int)ms.Position;
+                    return ms.ToArray();
+                }
+            }
         }
 
         public override void Deserialize(int _senderID, byte[] _data, int _receivedBytes)
@@ -30,41 +33,25 @@ namespace Network.Messages
                 using (NetworkReader nr = new NetworkReader(ms))
                 {
                     nr.ReadInt16();
-                    GameObject = nr.ReadGameObject();
-                    Item = (float) nr.ReadDouble();
-                }
-            }
-        }
-
-        public override byte[] Serialize(out int _bytes)
-        {
-            using (MemoryStream ms = new MemoryStream())
-            {
-                using (NetworkWriter nw = new NetworkWriter(ms))
-                {
-                    nw.Write((short)EMessageType.COLLISION_CHECK);
-                    nw.Write(GameObject);
-                    nw.Write(Item);
-
-                    _bytes = (int)ms.Position;
-                    return ms.ToArray();
+                    Player = nr.ReadGameObject();
+                    Item = nr.ReadSingle();
                 }
             }
         }
 
         public override void Use()
         {
-            Debug.Log("Item use request for " + GameObject, GameObject);
-            if (GameObject is object)
+            Debug.Log("Item use request for " + Player);
+            if (Player is object)
             {
-                NetworkItemHandeling NIM = GameObject.GetComponent<NetworkItemHandeling>();
+                NetworkItemHandeling NIM = Player.GetComponent<NetworkItemHandeling>();
                 if (NIM is object)
                 {
-                    NIM.UseItem(GameObject, Item);
+                    NIM.UseItem(Player, Item);
                 }
                 else
                 {
-                    Debug.LogWarning("NetworkItemHandeling was not found! " + GameObject, GameObject);
+                    Debug.LogWarning("NetworkItemHandeling was not found! " + Player);
                 }
             }
             else

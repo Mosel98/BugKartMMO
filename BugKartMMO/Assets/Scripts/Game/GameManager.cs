@@ -5,9 +5,22 @@ using Network;
 using System;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.SceneManagement;
 
 public class GameManager : NetworkBehaviour
 {
+    private GameObject m_FinishText;
+    public static string m_WinPlayer { get; set; }
+
+    private bool m_EndTime = false;
+    private float m_timer = 0.0f;
+    private float m_EndScreenTime = 5.0f;
+
+    private void Awake()
+    {
+        m_FinishText = GameObject.Find("Player UI/Canvas/Win_Text");
+    }
+
     public static GameModes GameMode
     {
         get
@@ -35,14 +48,22 @@ public class GameManager : NetworkBehaviour
     public TextMeshProUGUI m_countdownText;
     private bool m_canCount = true;
 
-    public TextMeshProUGUI m_FinishText;
-
     [SyncVar("countdownchanged")]
     private float m_countdown = 5.0f;
 
     protected override void Update()
     {
         base.Update();
+
+        if (m_EndTime)
+        {
+            m_timer += Time.deltaTime;
+
+            if (m_timer >= m_EndScreenTime)
+            {
+                SceneManager.LoadScene("MainMenu");
+            }
+        }
 
         if (IsServer)
         {
@@ -76,8 +97,10 @@ public class GameManager : NetworkBehaviour
 
     private void StartEndScreen()
     {
-        m_FinishText = GameObject.Find("Player UI/Canvas/Win_Text")?.GetComponent<TextMeshProUGUI>();
-        m_FinishText.enabled = true;
+        m_FinishText.SetActive(true);
+        m_FinishText.GetComponent<TextMeshProUGUI>().text = $"{m_WinPlayer} hat Gewonnen";
+
+        m_EndTime = true;
     }
 
 
